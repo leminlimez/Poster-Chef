@@ -13,10 +13,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(libimobiledevice REQUIRED IMPORTED_TARGET libimobiledevice-1.0)
+pkg_check_modules(openssl REQUIRED IMPORTED_TARGET openssl)
 
 add_library(libimobiledevice STATIC IMPORTED)
 set_target_properties(libimobiledevice PROPERTIES
     IMPORTED_LOCATION ${CMAKE_BINARY_DIR}/vendor/libimobiledevice/
+)
+
+add_library(openssl STATIC IMPORTED)
+set_target_properties(openssl PROPERTIES
+    IMPORTED_LOCATION ${CMAKE_BINARY_DIR}/vendor/openssl/
 )
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
@@ -44,6 +50,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         credits/LeminLimez.png
         posterboardmanager.h posterboardmanager.cpp
         tendiesfile.h tendiesfile.cpp
+        CreateBackup.cpp CreateBackup.h
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET PosterKitchen APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -69,6 +76,7 @@ endif()
 
 target_link_libraries(PosterKitchen PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(PosterKitchen PRIVATE PkgConfig::libimobiledevice)
+target_link_libraries(PosterKitchen PRIVATE PkgConfig::openssl)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
