@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     showUDID = false;
     ui->setupUi(this);
     ui->pages->setCurrentIndex(static_cast<int>(Page::Home));
+    ui->applyStatusLbl->hide();
     MainWindow::refreshDevices();
 }
 
@@ -188,6 +189,9 @@ void MainWindow::on_exploreBtn_clicked() {
 void MainWindow::on_resetCollectionsChk_clicked(bool checked) {
     PosterboardManager::getInstance().setResetMode(ResetMode::Collections, checked);
 }
+void MainWindow::on_resetMercuryChk_clicked(bool checked) {
+    PosterboardManager::getInstance().setResetMode(ResetMode::MercuryPoster, checked);
+}
 void MainWindow::on_resetPhotosChk_clicked(bool checked) {
     PosterboardManager::getInstance().setResetMode(ResetMode::Photos, checked);
 }
@@ -203,4 +207,8 @@ void MainWindow::on_skipSetupChk_clicked(bool checked) {
 }
 void MainWindow::on_supervisionChk_clicked(bool checked) {
     DeviceManager::getInstance().setSupervised(checked);
+}
+
+void MainWindow::on_applyBtn_clicked() {
+    DeviceManager::getInstance().applyTweaks(ui->applyStatusLbl);
 }

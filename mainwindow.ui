@@ -877,7 +877,7 @@ QToolButton:checked {
        <item>
         <widget class="QStackedWidget" name="pages">
          <property name="currentIndex">
-          <number>0</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="homePage">
           <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -1766,8 +1766,8 @@ QToolButton:pressed {
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>98</width>
-                <height>28</height>
+                <width>90</width>
+                <height>16</height>
                </rect>
               </property>
              </widget>
@@ -1923,6 +1923,13 @@ QToolButton:pressed {
             </widget>
            </item>
            <item>
+            <widget class="QCheckBox" name="resetMercuryChk">
+             <property name="text">
+              <string>Mercury Poster</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QCheckBox" name="resetPhotosChk">
              <property name="text">
               <string>Suggested Photos</string>
@@ -2045,6 +2052,13 @@ QToolButton:pressed {
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="applyStatusLbl">
+         <property name="text">
+          <string notr="true">Apply Status</string>
          </property>
         </widget>
        </item>

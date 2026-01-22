@@ -2,6 +2,7 @@
 #define DEVICEMANAGER_H
 
 #include "utils.h"
+#include <QLabel>
 #include <string>
 
 struct DeviceInfo {
@@ -31,6 +32,10 @@ public:
     void setSupervised(bool enabled);
 
     bool isDeviceAvailable();
+
+    const QString getWorkspace() const;
+
+    void applyTweaks(QLabel* statusLabel);
 
 private:
     DeviceManager();

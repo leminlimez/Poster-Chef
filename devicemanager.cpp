@@ -1,8 +1,14 @@
 #include "devicemanager.h"
 
+#include "CreateBackup.h"
+#include "posterboardmanager.h"
+
 #include <libimobiledevice/libimobiledevice.h>
 #include <libimobiledevice/lockdown.h>
 #include <libimobiledevice/restore.h>
+
+#include <QDir>
+#include <QStandardPaths>
 
 DeviceManager::DeviceManager() {
     // Constructor implementation
@@ -203,4 +209,30 @@ bool DeviceManager::isSupervised() {
 }
 void DeviceManager::setSupervised(bool enabled) {
     this->supervised = enabled;
+}
+
+
+// Applying tweaks
+const QString DeviceManager::getWorkspace() const
+{
+    // Get the destination directory path
+    auto workspaceDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/Workspace/";
+    return workspaceDir;
+}
+
+void DeviceManager::applyTweaks(QLabel* statusLabel) {
+    statusLabel->show();
+    auto workspacePath = DeviceManager::getWorkspace();
+    statusLabel->setText("Cleaning up folder...");
+    auto workspace = QDir(workspacePath);
+    if (workspace.exists()) {
+        workspace.removeRecursively();
+    }
+    if (!createDirectory(workspacePath)) {
+        statusLabel->setText("Failed to create workspace at " + workspacePath);
+        return;
+    }
+    statusLabel->setText("Generating backup files...");
+    PosterboardManager::getInstance().createResetModeFiles(workspacePath);
+    statusLabel->setText("File path: " + workspacePath);
 }

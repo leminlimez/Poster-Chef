@@ -48,12 +48,15 @@ private slots:
 
     // Reset Page
     void on_resetCollectionsChk_clicked(bool checked);
+    void on_resetMercuryChk_clicked(bool checked);
     void on_resetPhotosChk_clicked(bool checked);
     void on_resetGalleryCacheChk_clicked(bool checked);
 
     // Settings Page
     void on_skipSetupChk_clicked(bool checked);
     void on_supervisionChk_clicked(bool checked);
+
+    void on_applyBtn_clicked();
 
 private:
     Ui::MainWindow *ui;
