@@ -205,6 +205,7 @@ void MainWindow::on_skipSetupChk_clicked(bool checked) {
     DeviceManager::getInstance().setSkipSetup(checked);
     ui->supervisionChk->setVisible(checked);
     ui->supervisionOrganization->setVisible(checked);
+    ui->skipSetupEnabledLbl->setVisible(checked);
 }
 void MainWindow::on_supervisionChk_clicked(bool checked) {
     DeviceManager::getInstance().setSupervised(checked);

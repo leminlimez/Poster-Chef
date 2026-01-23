@@ -451,7 +451,7 @@ QSlider::tick:horizontal {
 }</string>
                </property>
                <property name="icon">
-                <iconset resource="resources.qrc">
+                <iconset resource="../resources.qrc">
                  <normaloff>:/icon/phone.svg</normaloff>:/icon/phone.svg</iconset>
                </property>
                <property name="iconSize">
@@ -556,7 +556,7 @@ QSlider::tick:horizontal {
 }</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset resource="../resources.qrc">
               <normaloff>:/icon/arrow-clockwise.svg</normaloff>:/icon/arrow-clockwise.svg</iconset>
             </property>
             <property name="checkable">
@@ -634,7 +634,7 @@ QToolButton:checked {
           <string>   Home</string>
          </property>
          <property name="icon">
-          <iconset resource="resources.qrc">
+          <iconset resource="../resources.qrc">
            <normaloff>:/icon/house.svg</normaloff>:/icon/house.svg</iconset>
          </property>
          <property name="iconSize">
@@ -691,7 +691,7 @@ QToolButton:checked {
           <string>   Tendies</string>
          </property>
          <property name="icon">
-          <iconset resource="resources.qrc">
+          <iconset resource="../resources.qrc">
            <normaloff>:/icon/wallpaper.svg</normaloff>:/icon/wallpaper.svg</iconset>
          </property>
          <property name="checkable">
@@ -742,7 +742,7 @@ QToolButton:checked {
           <string>   Video</string>
          </property>
          <property name="icon">
-          <iconset resource="resources.qrc">
+          <iconset resource="../resources.qrc">
            <normaloff>:/icon/photo.svg</normaloff>:/icon/photo.svg</iconset>
          </property>
          <property name="checkable">
@@ -790,7 +790,7 @@ QToolButton:checked {
           <string>   Clearing</string>
          </property>
          <property name="icon">
-          <iconset resource="resources.qrc">
+          <iconset resource="../resources.qrc">
            <normaloff>:/icon/arrow-clockwise.svg</normaloff>:/icon/arrow-clockwise.svg</iconset>
          </property>
          <property name="checkable">
@@ -839,7 +839,7 @@ QToolButton:checked {
           <string>   Settings</string>
          </property>
          <property name="icon">
-          <iconset resource="resources.qrc">
+          <iconset resource="../resources.qrc">
            <normaloff>:/icon/gear.svg</normaloff>:/icon/gear.svg</iconset>
          </property>
          <property name="checkable">
@@ -929,7 +929,7 @@ QToolButton:checked {
 }</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="resources.qrc">
+                 <iconset resource="../resources.qrc">
                   <normaloff>:/icon/phone.svg</normaloff>:/icon/phone.svg</iconset>
                 </property>
                 <property name="iconSize">
@@ -1116,7 +1116,7 @@ QToolButton:checked {
                           <string>...</string>
                          </property>
                          <property name="icon">
-                          <iconset resource="resources.qrc">
+                          <iconset resource="../resources.qrc">
                            <normaloff>:/credits/big_chef.png</normaloff>:/credits/big_chef.png</iconset>
                          </property>
                          <property name="iconSize">
@@ -1197,7 +1197,7 @@ QToolButton:checked {
                          <string>  Join the Discord</string>
                         </property>
                         <property name="icon">
-                         <iconset resource="resources.qrc">
+                         <iconset resource="../resources.qrc">
                           <normaloff>:/icon/discord.svg</normaloff>:/icon/discord.svg</iconset>
                         </property>
                         <property name="toolButtonStyle">
@@ -1214,7 +1214,7 @@ QToolButton:checked {
                          <string> Star on Github</string>
                         </property>
                         <property name="icon">
-                         <iconset resource="resources.qrc">
+                         <iconset resource="../resources.qrc">
                           <normaloff>:/icon/star.svg</normaloff>:/icon/star.svg</iconset>
                         </property>
                         <property name="toolButtonStyle">
@@ -1319,7 +1319,7 @@ QToolButton:checked {
                        <string>  LeminLimez</string>
                       </property>
                       <property name="icon">
-                       <iconset resource="resources.qrc">
+                       <iconset resource="../resources.qrc">
                         <normaloff>:/credits/LeminLimez.png</normaloff>:/credits/LeminLimez.png</iconset>
                       </property>
                       <property name="toolButtonStyle">
@@ -1361,7 +1361,7 @@ QToolButton:pressed {
                        <string>...</string>
                       </property>
                       <property name="icon">
-                       <iconset resource="resources.qrc">
+                       <iconset resource="../resources.qrc">
                         <normaloff>:/icon/twitter.svg</normaloff>:/icon/twitter.svg</iconset>
                       </property>
                      </widget>
@@ -1400,7 +1400,7 @@ QToolButton:pressed {
                        <string>...</string>
                       </property>
                       <property name="icon">
-                       <iconset resource="resources.qrc">
+                       <iconset resource="../resources.qrc">
                         <normaloff>:/icon/github.svg</normaloff>:/icon/github.svg</iconset>
                       </property>
                      </widget>
@@ -1440,7 +1440,7 @@ QToolButton:pressed {
                        <string>...</string>
                       </property>
                       <property name="icon">
-                       <iconset resource="resources.qrc">
+                       <iconset resource="../resources.qrc">
                         <normaloff>:/icon/currency-dollar.svg</normaloff>:/icon/currency-dollar.svg</iconset>
                       </property>
                      </widget>
@@ -1536,7 +1536,7 @@ QToolButton:pressed {
                        <string>  Additional Thanks</string>
                       </property>
                       <property name="icon">
-                       <iconset resource="resources.qrc">
+                       <iconset resource="../resources.qrc">
                         <normaloff>:/icon/heart-fill.svg</normaloff>:/icon/heart-fill.svg</iconset>
                       </property>
                       <property name="toolButtonStyle">
@@ -1700,7 +1700,7 @@ QToolButton:pressed {
                  <string>   Import Tendies</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="resources.qrc">
+                 <iconset resource="../resources.qrc">
                   <normaloff>:/icon/import.svg</normaloff>:/icon/import.svg</iconset>
                 </property>
                 <property name="toolButtonStyle">
@@ -1727,7 +1727,7 @@ QToolButton:pressed {
                  <string>   Discover Wallpapers</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="resources.qrc">
+                 <iconset resource="../resources.qrc">
                   <normaloff>:/icon/globe.svg</normaloff>:/icon/globe.svg</iconset>
                 </property>
                 <property name="iconSize">
@@ -1754,8 +1754,8 @@ QToolButton:pressed {
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>924</width>
-                <height>330</height>
+                <width>90</width>
+                <height>16</height>
                </rect>
               </property>
              </widget>
@@ -1861,7 +1861,7 @@ QToolButton:pressed {
                  <string>   Export as .tendies</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="resources.qrc">
+                 <iconset resource="../resources.qrc">
                   <normaloff>:/icon/export.svg</normaloff>:/icon/export.svg</iconset>
                 </property>
                 <property name="toolButtonStyle">
@@ -1951,7 +1951,7 @@ QToolButton:pressed {
 }</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="resources.qrc">
+                 <iconset resource="../resources.qrc">
                   <normaloff>:/icon/arrow-clockwise.svg</normaloff>:/icon/arrow-clockwise.svg</iconset>
                 </property>
                </widget>
@@ -2127,7 +2127,7 @@ QToolButton:pressed {
 }</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="resources.qrc">
+                 <iconset resource="../resources.qrc">
                   <normaloff>:/icon/gear.svg</normaloff>:/icon/gear.svg</iconset>
                 </property>
                </widget>
@@ -2309,13 +2309,6 @@ QToolButton:pressed {
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="applyStatusLbl">
-         <property name="text">
-          <string notr="true">Apply Status</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QWidget" name="bottomBar" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <property name="leftMargin">
@@ -2331,6 +2324,26 @@ QToolButton:pressed {
            <number>0</number>
           </property>
           <item>
+           <widget class="QLabel" name="applyStatusLbl">
+            <property name="text">
+             <string notr="true">Apply Status</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
            <widget class="QToolButton" name="applyBtn">
             <property name="enabled">
              <bool>true</bool>
@@ -2342,11 +2355,34 @@ QToolButton:pressed {
              <string>   Apply</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset resource="../resources.qrc">
               <normaloff>:/icon/check-circle.svg</normaloff>:/icon/check-circle.svg</iconset>
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_11">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="skipSetupEnabledLbl">
+            <property name="text">
+             <string>Skip Setup is enabled.</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -2370,7 +2406,7 @@ QToolButton:pressed {
   </widget>
  </widget>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections/>
  <buttongroups>
