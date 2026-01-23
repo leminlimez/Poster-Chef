@@ -32,10 +32,10 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 set(TS_FILES PosterChef_en_US.ts)
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
+        src/main.cpp
+        src/mainwindow.cpp
+        src/mainwindow.h
+        src/mainwindow.ui
         ${TS_FILES}
 )
 
@@ -56,13 +56,13 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
 
         resources.qrc
-        devicemanager.h devicemanager.cpp
-        utils.h
+        src/devicemanager.h src/devicemanager.cpp
+        src/utils.h
         credits/LeminLimez.png
-        posterboardmanager.h posterboardmanager.cpp
-        tendiesfile.h tendiesfile.cpp
-        CreateBackup.cpp CreateBackup.h
-        proc_modules/idevicebackup2.c proc_modules/idevicebackup2.h proc_modules/endianness.h
+        src/posterboardmanager.h src/posterboardmanager.cpp
+        src/tendiesfile.h src/tendiesfile.cpp
+        src/CreateBackup.cpp src/CreateBackup.h
+        src/proc_modules/idevicebackup2.c src/proc_modules/idevicebackup2.h src/proc_modules/endianness.h
         ${app_icon_resource_windows}
         ${app_icon_macos}
     )
