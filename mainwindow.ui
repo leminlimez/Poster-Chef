@@ -787,7 +787,7 @@ QToolButton:checked {
 }</string>
          </property>
          <property name="text">
-          <string>   Resetting</string>
+          <string>   Clearing</string>
          </property>
          <property name="icon">
           <iconset resource="resources.qrc">
@@ -846,7 +846,7 @@ QToolButton:checked {
           <bool>true</bool>
          </property>
          <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextBesideIcon</enum>
+          <enum>Qt::ToolButtonIconOnly</enum>
          </property>
          <property name="cls" stdset="0">
           <string>sidebarBtn</string>
@@ -1754,8 +1754,8 @@ QToolButton:pressed {
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>90</width>
-                <height>16</height>
+                <width>924</width>
+                <height>330</height>
                </rect>
               </property>
              </widget>
@@ -1903,6 +1903,140 @@ QToolButton:pressed {
          </widget>
          <widget class="QWidget" name="resettingPage">
           <layout class="QVBoxLayout" name="verticalLayout_7">
+           <property name="spacing">
+            <number>-1</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QWidget" name="horizontalWidget_8" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_14">
+              <property name="spacing">
+               <number>10</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>9</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QToolButton" name="toolButton_8">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QToolButton {
+	icon-size: 24px;
+	background-color: transparent;
+	padding-left: 0px;
+	padding-right: 5px;
+	border-radius: 0px;
+}</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="resources.qrc">
+                  <normaloff>:/icon/arrow-clockwise.svg</normaloff>:/icon/arrow-clockwise.svg</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="verticalWidget_5" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_10">
+                 <property name="spacing">
+                  <number>6</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="pageLbl_2">
+                   <property name="font">
+                    <font>
+                     <pointsize>-1</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Clearing Actions</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_18">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Fixed</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>16</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_8">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_3">
+             <property name="styleSheet">
+              <string notr="true">QFrame {
+	color: #414141;
+}</string>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
            <item>
             <widget class="QCheckBox" name="resetCollectionsChk">
              <property name="text">
@@ -1948,6 +2082,137 @@ QToolButton:pressed {
          </widget>
          <widget class="QWidget" name="settingsPage">
           <layout class="QVBoxLayout" name="verticalLayout_6">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QWidget" name="horizontalWidget_6" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_13">
+              <property name="spacing">
+               <number>10</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>9</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QToolButton" name="toolButton_7">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QToolButton {
+	icon-size: 24px;
+	background-color: transparent;
+	padding-left: 0px;
+	padding-right: 5px;
+	border-radius: 0px;
+}</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="resources.qrc">
+                  <normaloff>:/icon/gear.svg</normaloff>:/icon/gear.svg</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="verticalWidget_4" native="true">
+                <layout class="QVBoxLayout" name="verticalLayout_9">
+                 <property name="spacing">
+                  <number>6</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="pageLbl">
+                   <property name="font">
+                    <font>
+                     <pointsize>-1</pointsize>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Settings</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="verticalSpacer_17">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Fixed</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>16</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_7">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_2">
+             <property name="styleSheet">
+              <string notr="true">QFrame {
+	color: #414141;
+}</string>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
            <item>
             <widget class="QCheckBox" name="autoRebootChk">
              <property name="text">

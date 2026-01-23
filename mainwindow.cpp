@@ -43,6 +43,7 @@ void MainWindow::refreshDevices()
         ui->devicePicker->setEnabled(false);
         ui->devicePicker->addItem(QString("None"), QVariant::fromValue(NULL));
         ui->pages->setCurrentIndex(static_cast<int>(Page::Home));
+        ui->homePageBtn->setChecked(true);
         toggle_applyBtn_visibility(false);
         // ui->homePageBtn->setChecked(true);
 
