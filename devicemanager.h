@@ -51,6 +51,8 @@ private:
     // Preferences
     bool skipSetup;
     bool supervised;
+
+    bool restoreBackupToDevice(const std::string&, const std::string&);
 };
 
 #endif // DEVICEMANAGER_H

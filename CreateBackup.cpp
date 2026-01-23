@@ -15,6 +15,9 @@
 #include <QRandomGenerator>
 #include <QRegularExpression>
 #include <QCryptographicHash>
+#include <libimobiledevice/libimobiledevice.h>
+#include <libimobiledevice/lockdown.h>
+#include <libimobiledevice/installation_proxy.h>
 
 QString removeDomain(const QString &domain, const QString &input)
 {
@@ -130,6 +133,9 @@ void processFiles(const QString &path, const QString &domainString, const QStrin
     {
         writeStringWithLength(output_file, "SysSharedContainerDomain-systemgroup.com.apple.configurationprofiles");
     }
+    else if (domainString == "PB") {
+        writeStringWithLength(output_file, "AppDomain-com.apple.PosterBoard");
+    }
     else
     {
         writeStringWithLength(output_file, domainString);
@@ -161,6 +167,9 @@ void processFiles(const QString &path, const QString &domainString, const QStrin
         if (domainString == "ConfigProfileDomain")
         {
             hash = QString::fromStdString(calculateSHA1("SysSharedContainerDomain-systemgroup.com.apple.configurationprofiles-" + fileString.toStdString()));
+        }
+        else if (domainString == "PB") {
+            hash = QString::fromStdString(calculateSHA1("AppDomain-com.apple.PosterBoard" + fileString.toStdString()));
         }
         else
         {
@@ -224,7 +233,99 @@ bool removeDirectoryIfExists(const QString &dirPath)
     return false;
 }
 
-bool CreateBackup::createBackup(const QString& indir, const QString& outdir)
+QString getApplicationData(const std::string udid) {
+    QString resulting_plist = "";
+    idevice_t device = nullptr;
+    lockdownd_client_t lockdown = nullptr;
+    lockdownd_service_descriptor_t service = nullptr;
+    instproxy_client_t instproxy = nullptr;
+    std::string bundle_id = "com.apple.PosterBoard";
+    plist_t apps_list = nullptr;
+
+    if (idevice_new_with_options(&device, udid.c_str(), IDEVICE_LOOKUP_USBMUX) != IDEVICE_E_SUCCESS) {
+        goto cleanup;
+    }
+    if (lockdownd_client_new_with_handshake(device, &lockdown, "CreateBackup") != LOCKDOWN_E_SUCCESS) {
+        goto cleanup;
+    }
+    if (lockdownd_start_service(lockdown, "com.apple.mobile.installation_proxy", &service) != LOCKDOWN_E_SUCCESS) {
+        goto cleanup;
+    }
+    if (instproxy_client_new(device, service, &instproxy) != INSTPROXY_E_SUCCESS) {
+        goto cleanup;
+    }
+
+    // this is required for the goto statements not to error for some reason
+    // I love C++ -.-
+    if (true) {
+        plist_t options = plist_new_dict();
+
+        plist_t attrs = plist_new_array();
+        plist_array_append_item(attrs, plist_new_string("CFBundleVersion"));
+        plist_array_append_item(attrs, plist_new_string("Container"));
+        plist_dict_set_item(options, "ReturnAttributes", attrs);
+
+        const char *app_ids[] = {
+            "com.apple.PosterBoard",
+            nullptr
+        };
+        instproxy_error_t lookup_err = instproxy_lookup(instproxy, app_ids, options, &apps_list);
+        plist_free(attrs);
+        plist_free(options);
+
+        if (lookup_err == INSTPROXY_E_SUCCESS && apps_list) {
+            plist_t app = plist_dict_get_item(apps_list, bundle_id.c_str());
+            if (app) {
+                // this is definitely not a great way of doing it
+                // but I am not good enough at C++ to find a better way
+                resulting_plist = R"(
+    <key>Applications</key>
+    <dict>
+        <key>com.apple.PosterBoard</key>
+        <dict>
+            <key>CFBundleIdentifier</key>
+            <string>com.apple.PosterBoard</string>
+            <key>CFBundleVersion</key>
+            <string>)";
+                plist_t bundle_ver = plist_dict_get_item(app, "CFBundleVersion");
+                uint64_t bundle_length;
+                const char *bundle_ver_str = plist_get_string_ptr(bundle_ver, &bundle_length);
+                resulting_plist += bundle_ver_str;
+                resulting_plist += R"(</string>
+            <key>ContainerContentClass</key>
+            <string>Data/Application</string>
+            <key>Path</key>
+            <string>)";
+                plist_t container_path = plist_dict_get_item(app, "Container");
+                uint64_t cont_length;
+                const char *container_path_str = plist_get_string_ptr(container_path, &cont_length);
+                resulting_plist += container_path_str;
+                resulting_plist += R"(</string>
+        </dict>
+    </dict>)";
+                plist_free(bundle_ver);
+                plist_free(container_path);
+                plist_free(app);
+            }
+        }
+    }
+
+cleanup:
+    if (apps_list)
+        plist_free(apps_list);
+    if (instproxy)
+        instproxy_client_free(instproxy);
+    if (service)
+        lockdownd_service_descriptor_free(service);
+    if (lockdown)
+        lockdownd_client_free(lockdown);
+    if (device)
+        idevice_free(device);
+
+    return resulting_plist;
+}
+
+bool CreateBackup::createBackup(const QString& indir, const QString& outdir, const std::string udid)
 {
     removeDirectoryIfExists(outdir);
     createDirectory(outdir);
@@ -246,10 +347,14 @@ bool CreateBackup::createBackup(const QString& indir, const QString& outdir)
 
     // Iterate over all domains
     QDir domainDir(indir);
+    bool restorePB = false;
     for (const QString &domainEntry : domainDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
     {
         QString domain = indir + "/" + domainEntry;
         QString domainString = QFileInfo(domain).baseName();
+        if (domainString == "PB") {
+            restorePB = true;
+        }
 
         processFiles(domain, domainString, outdir);
     }
@@ -265,7 +370,6 @@ bool CreateBackup::createBackup(const QString& indir, const QString& outdir)
     QFile infoPlist(outdir + "/Info.plist");
     if (!infoPlist.open(QIODevice::WriteOnly | QIODevice::Text))
     {
-        qDebug() << "Failed to create Info.plist file";
         return false;
     }
     QTextStream infoStream(&infoPlist);
@@ -303,6 +407,11 @@ bool CreateBackup::createBackup(const QString& indir, const QString& outdir)
     statusPlist.close();
 
     // Generate Manifest.plist
+    QString apps_list = "";
+    if (restorePB) {
+        qDebug() << "restorePB";
+        apps_list = getApplicationData(udid);
+    }
     QString manifestPlistContent = R"(<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -342,10 +451,11 @@ bool CreateBackup::createBackup(const QString& indir, const QString& outdir)
 	<key>SystemDomainsVersion</key>
 	<string>20.0</string>
 	<key>Version</key>
-	<string>9.1</string>
+	<string>9.1</string>)";
+    manifestPlistContent += apps_list;
+    manifestPlistContent += R"(
 </dict>
-</plist>
-)";
+</plist>)";
     QFile manifestPlist(outdir + "/Manifest.plist");
     if (!manifestPlist.open(QIODevice::WriteOnly | QIODevice::Text))
     {

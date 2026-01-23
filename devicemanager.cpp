@@ -232,7 +232,27 @@ void DeviceManager::applyTweaks(QLabel* statusLabel) {
         statusLabel->setText("Failed to create workspace at " + workspacePath);
         return;
     }
-    statusLabel->setText("Generating backup files...");
+    // Create tweak files
+    statusLabel->setText("Generating files...");
     PosterboardManager::getInstance().createResetModeFiles(workspacePath);
-    statusLabel->setText("File path: " + workspacePath);
+
+    // Generate the backup
+    statusLabel->setText("Generating backup...");
+    auto backupDirectoryPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/Backup";
+    auto udid_val = getCurrentUUID();
+    if (udid_val.has_value()) {
+        CreateBackup::createBackup(workspacePath, backupDirectoryPath, *udid_val);
+    } else {
+        // Make error condition
+        statusLabel->setText("No udid found!");
+        return;
+    }
+    // statusLabel->setText("Restoring backup to device...");
+
+    // auto success = DeviceManager::restoreBackupToDevice(*DeviceManager::getCurrentUUID(), QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString());
+    // if (success) {
+    //     statusLabel->setText("Done!");
+    // } else {
+    //     statusLabel->setText("Failed.");
+    // }
 }
