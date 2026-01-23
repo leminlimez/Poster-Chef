@@ -144,9 +144,9 @@ void processFiles(const QString &path, const QString &domainString, const QStrin
 
     if (QFileInfo(path).isFile())
     {
-        output_file.write("\xFF\xFF\x00\x14", 4);
+        output_file.write("\x00\x00\x00\x14", 4);
         writeHash(output_file, path);
-        output_file.write("\xFF\xFF\x81\xFF\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\xF5\x00\x00\x01\xF5", 20);
+        output_file.write("\x00\x00\x81\xED\xCE\xB5\xE0\xEF\xC3\x37\x23\x42\x00\x00\x01\xF5\x00\x00\x01\xF5", 20);
         generateRandomHex(output_file);
         QFileInfo fileInfo(path);
         qint64 fileSize = fileInfo.size();
@@ -169,7 +169,7 @@ void processFiles(const QString &path, const QString &domainString, const QStrin
             hash = QString::fromStdString(calculateSHA1("SysSharedContainerDomain-systemgroup.com.apple.configurationprofiles-" + fileString.toStdString()));
         }
         else if (domainString == "App-PB") {
-            hash = QString::fromStdString(calculateSHA1("AppDomain-com.apple.PosterBoard" + fileString.toStdString()));
+            hash = QString::fromStdString(calculateSHA1("AppDomain-com.apple.PosterBoard-" + fileString.toStdString()));
         }
         else
         {
@@ -180,7 +180,7 @@ void processFiles(const QString &path, const QString &domainString, const QStrin
     }
     else if (QFileInfo(path).isDir())
     {
-        output_file.write("\xFF\xFF\xFF\xFF\xFF\xFF\x41\xFF\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\xF5\x00\x00\x01\xF5", 24);
+        output_file.write("\x00\x00\x00\x00\x00\x00\x41\xED\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\xF5\x00\x00\x01\xF5", 24);
         generateRandomHex(output_file);
         output_file.write("\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00", 10);
         output_file.close();
@@ -255,9 +255,8 @@ QString getApplicationData(const std::string udid) {
         goto cleanup;
     }
 
-    // this is required for the goto statements not to error for some reason
-    // I love C++ -.-
-    if (true) {
+    // create a new scope to prevent the gotos from erroring
+    {
         plist_t options = plist_new_dict();
 
         plist_t attrs = plist_new_array();
@@ -409,7 +408,6 @@ bool CreateBackup::createBackup(const QString& indir, const QString& outdir, con
     // Generate Manifest.plist
     QString apps_list = "";
     if (restorePB) {
-        qDebug() << "restorePB";
         apps_list = getApplicationData(udid);
     }
     QString manifestPlistContent = R"(<?xml version="1.0" encoding="UTF-8"?>
