@@ -3,6 +3,7 @@
 
 #include "utils.h"
 #include <QLabel>
+#include <QDir>
 #include <string>
 
 struct DeviceInfo {
@@ -55,6 +56,7 @@ private:
     bool supervised;
     std::string organizationName;
 
+    int createSkipSetupFiles(QDir path);
     bool restoreBackupToDevice(const std::string&, const std::string&);
 };
 

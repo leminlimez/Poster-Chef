@@ -6,7 +6,9 @@
 #include <libimobiledevice/libimobiledevice.h>
 #include <libimobiledevice/lockdown.h>
 #include <libimobiledevice/restore.h>
+#include <plist/plist.h>
 
+#include <fstream>
 #include <QCoreApplication>
 #include <QDebug>
 #include <QDir>
@@ -231,6 +233,107 @@ const QString DeviceManager::getWorkspace() const
     return workspaceDir;
 }
 
+int DeviceManager::createSkipSetupFiles(QDir path) {
+    // Cloud Config plist file
+    plist_t cloud_config_plist = plist_new_dict();
+
+    std::vector<std::string> skipSetup = {
+        "Location", "Restore", "SIMSetup", "Android", "AppleID",
+        "IntendedUser", "TOS", "Siri", "ScreenTime", "Diagnostics",
+        "SoftwareUpdate", "Passcode", "Biometric", "Payment", "Zoom",
+        "DisplayTone", "MessagingActivationUsingPhoneNumber",
+        "HomeButtonSensitivity", "CloudStorage", "ScreenSaver",
+        "TapToSetup", "Keyboard", "PreferredLanguage", "SpokenLanguage",
+        "WatchMigration", "OnBoarding", "TVProviderSignIn",
+        "TVHomeScreenSync", "Privacy", "TVRoom", "iMessageAndFaceTime",
+        "AppStore", "Safety", "Multitasking", "ActionButton",
+        "TermsOfAddress", "AccessibilityAppearance", "Welcome",
+        "Appearance", "RestoreCompleted", "UpdateCompleted", "WiFi",
+        "Display", "Tone", "LanguageAndLocale", "TouchID",
+        "TrueToneDisplay", "FileVault", "iCloudStorage",
+        "iCloudDiagnostics", "Registration",
+        "DeviceToDeviceMigration", "UnlockWithWatch", "Accessibility",
+        "All", "ExpressLanguage", "Language", "N/A", "Region",
+        "Avatar", "DeviceProtection", "Key", "LockdownMode",
+        "Wallpaper", "PrivacySubtitle", "SecuritySubtitle",
+        "DataSubtitle", "AppleIDSubtitle", "AppearanceSubtitle",
+        "PreferredLang", "OnboardingSubtitle", "AppleTVSubtitle",
+        "Intelligence", "WebContentFiltering", "CameraButton",
+        "AdditionalPrivacySettings", "EnableLockdownMode",
+        "OSShowcase", "SafetyAndHandling", "Tips",
+        "AgeBasedSafetySettings"
+    };
+
+    plist_t skipSetupArray = plist_new_array();
+    for (const auto& item : skipSetup) {
+        plist_array_append_item(skipSetupArray, plist_new_string(item.c_str()));
+    }
+    plist_dict_set_item(cloud_config_plist, "SkipSetup", skipSetupArray);
+
+    // Other keys
+    plist_dict_set_item(cloud_config_plist, "AllowPairing", plist_new_bool(true));
+    plist_dict_set_item(cloud_config_plist, "ConfigurationWasApplied", plist_new_bool(true));
+    plist_dict_set_item(cloud_config_plist, "CloudConfigurationUIComplete", plist_new_bool(true));
+    plist_dict_set_item(cloud_config_plist, "IsSupervised", plist_new_bool(false));
+    plist_dict_set_item(cloud_config_plist, "ConfigurationSource", plist_new_uint(0));
+    plist_dict_set_item(cloud_config_plist, "PostSetupProfileWasInstalled", plist_new_bool(true));
+    plist_dict_set_item(cloud_config_plist, "IsMDMUnremovable", plist_new_bool(false));
+
+    if (supervised) {
+        plist_dict_set_item(cloud_config_plist, "IsSupervised", plist_new_bool(true));
+        if (organizationName != "") {
+            plist_dict_set_item(cloud_config_plist, "OrganizationName", plist_new_string(organizationName.c_str()));
+        }
+    }
+
+    // Serialize to XML
+    char* xml = nullptr;
+    uint32_t length = 0;
+    plist_to_xml(cloud_config_plist, &xml, &length);
+    plist_free(cloud_config_plist);
+
+    // Write to file
+    QString parentPath = path.absoluteFilePath("ConfigProfileDomain/Library/ConfigurationProfiles");
+    createDirectory(parentPath);
+    QString ccdFilePath = parentPath + "/CloudConfigurationDetails.plist";
+    std::ofstream out(ccdFilePath.toStdString(), std::ios::binary);
+    if (!out) {
+        qDebug() << "Failed to open CloudConfigurationDetails.plist for writing\n";
+        free(xml);
+        return 1;
+    }
+
+    out.write(xml, length);
+    out.close();
+    free(xml);
+
+    // PurpleBuddy plist
+    plist_t purplebuddy = plist_new_dict();
+    plist_dict_set_item(purplebuddy, "SetupDone", plist_new_bool(true));
+    plist_dict_set_item(purplebuddy, "SetupFinishedAllSteps", plist_new_bool(true));
+    plist_dict_set_item(purplebuddy, "UserChoseLanguage", plist_new_bool(true));
+
+    char* pbxml = nullptr;
+    uint32_t pblength = 0;
+    plist_to_xml(purplebuddy, &pbxml, &pblength);
+    plist_free(purplebuddy);
+
+    QString pbParentPath = path.absoluteFilePath("ManagedPreferencesDomain/mobile");
+    createDirectory(pbParentPath);
+    QString pbFilePath = pbParentPath + "/com.apple.purplebuddy.plist";
+    std::ofstream pbout(pbFilePath.toStdString(), std::ios::binary);
+    if (!pbout) {
+        qDebug() << "Failed to open com.apple.purplebuddy.plist for writing\n";
+        free(pbxml);
+        return 2;
+    }
+
+    pbout.write(pbxml, pblength);
+    pbout.close();
+    free(pbxml);
+    return 0;
+}
+
 void DeviceManager::applyTweaks(QLabel* statusLabel) {
     statusLabel->show();
     auto workspacePath = DeviceManager::getWorkspace();
@@ -246,6 +349,12 @@ void DeviceManager::applyTweaks(QLabel* statusLabel) {
     // Create tweak files
     statusLabel->setText("Generating files...");
     PosterboardManager::getInstance().createResetModeFiles(workspacePath);
+    if (skipSetup) {
+        if (createSkipSetupFiles(workspace) != 0) {
+            statusLabel->setText("Failed to create Skip Setup files!");
+            return;
+        }
+    }
 
     // Generate the backup
     statusLabel->setText("Generating backup...");
