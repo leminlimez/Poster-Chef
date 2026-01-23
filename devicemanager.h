@@ -30,6 +30,8 @@ public:
     void setSkipSetup(bool enabled);
     bool isSupervised();
     void setSupervised(bool enabled);
+    std::string getOrganizationName();
+    void setOrganizationName(std::string name);
 
     bool isDeviceAvailable();
 
@@ -51,6 +53,7 @@ private:
     // Preferences
     bool skipSetup;
     bool supervised;
+    std::string organizationName;
 
     bool restoreBackupToDevice(const std::string&, const std::string&);
 };

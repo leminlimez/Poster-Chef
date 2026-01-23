@@ -22,6 +22,7 @@ DeviceManager::DeviceManager() {
 
     skipSetup = true;
     supervised = false;
+    organizationName = "";
 }
 
 DeviceManager &DeviceManager::getInstance()
@@ -213,6 +214,12 @@ bool DeviceManager::isSupervised() {
 }
 void DeviceManager::setSupervised(bool enabled) {
     this->supervised = enabled;
+}
+std::string DeviceManager::getOrganizationName() {
+    return this->organizationName;
+}
+void DeviceManager::setOrganizationName(std::string name) {
+    this->organizationName = name;
 }
 
 

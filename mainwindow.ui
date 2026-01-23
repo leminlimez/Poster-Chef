@@ -877,7 +877,7 @@ QToolButton:checked {
        <item>
         <widget class="QStackedWidget" name="pages">
          <property name="currentIndex">
-          <number>3</number>
+          <number>4</number>
          </property>
          <widget class="QWidget" name="homePage">
           <layout class="QVBoxLayout" name="verticalLayout_5">

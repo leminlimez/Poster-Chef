@@ -55,6 +55,7 @@ private slots:
     // Settings Page
     void on_skipSetupChk_clicked(bool checked);
     void on_supervisionChk_clicked(bool checked);
+    void on_supervisionOrganization_textEdited(const QString &text);
 
     void on_applyBtn_clicked();
 

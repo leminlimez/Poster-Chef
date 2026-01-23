@@ -208,6 +208,9 @@ void MainWindow::on_skipSetupChk_clicked(bool checked) {
 void MainWindow::on_supervisionChk_clicked(bool checked) {
     DeviceManager::getInstance().setSupervised(checked);
 }
+void MainWindow::on_supervisionOrganization_textEdited(const QString &text) {
+    DeviceManager::getInstance().setOrganizationName(text.toStdString());
+}
 
 void MainWindow::on_applyBtn_clicked() {
     DeviceManager::getInstance().applyTweaks(ui->applyStatusLbl);
