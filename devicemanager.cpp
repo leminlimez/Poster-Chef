@@ -7,7 +7,11 @@
 #include <libimobiledevice/lockdown.h>
 #include <libimobiledevice/restore.h>
 
+#include <QCoreApplication>
+#include <QDebug>
 #include <QDir>
+#include <QMessageBox>
+#include <QProcess>
 #include <QStandardPaths>
 
 DeviceManager::DeviceManager() {
@@ -247,12 +251,72 @@ void DeviceManager::applyTweaks(QLabel* statusLabel) {
         statusLabel->setText("No udid found!");
         return;
     }
-    // statusLabel->setText("Restoring backup to device...");
+    statusLabel->setText("Restoring backup to device...");
 
-    // auto success = DeviceManager::restoreBackupToDevice(*DeviceManager::getCurrentUUID(), QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString());
-    // if (success) {
-    //     statusLabel->setText("Done!");
-    // } else {
-    //     statusLabel->setText("Failed.");
-    // }
+    auto success = DeviceManager::restoreBackupToDevice(*DeviceManager::getCurrentUUID(), QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString());
+    if (success) {
+        statusLabel->setText("Done!");
+    } else {
+        statusLabel->setText("Failed.");
+    }
+}
+
+bool DeviceManager::restoreBackupToDevice(const std::string& udid, const std::string& backupDirectory) {
+    QString exe_name = "idevicebackup2";
+#ifdef _WIN32
+    // Unimplemented
+    return false;
+#elif __linux__
+    // Unimplemented
+    return false;
+#elif __APPLE__
+    // macOS
+    exe_name = QCoreApplication::applicationDirPath() + "/../Executables/" + exe_name;
+#if defined(__arm64__)
+    // arm
+    exe_name += "_macOS_arm";
+#else
+    // intel
+    return false;
+#endif
+#endif
+    QStringList arguments;
+    arguments << "-u" << QString::fromStdString(udid) << "-s" << "Backup" << "restore" << "--system" << "--skip-apps" << QString::fromStdString(backupDirectory);
+
+    QProcess process;
+    qDebug() << "using: " << exe_name;
+    process.start(exe_name, arguments);
+    process.waitForFinished(-1);
+
+    QByteArray output = process.readAllStandardOutput();
+    QByteArray errorOutput = process.readAllStandardError();
+
+    // Split the output into lines using '\n' as the separator
+    // AAA Fix using \r\n
+    QStringList outputLines = QString(output).split("\r\n");
+
+    // Get the last two lines of the output
+    QString lastLine;
+    QString secondLastLine;
+    if (outputLines.size() >= 3) {
+        lastLine = outputLines.at(outputLines.size() - 2);
+        secondLastLine = outputLines.at(outputLines.size() - 3);
+    } else {
+        lastLine = output;
+        secondLastLine = errorOutput;
+    }
+
+    if (lastLine == "Restore Successful.")
+    {
+        QMessageBox::information(nullptr, "Success!", "All done! Your device will now restart.\n\nYou should see a black loading screen after entering your passcode - it will disappear after a few seconds.\n\nImportant: If you are presented with a setup, select \"Customize\" > \"Don't transfer apps and data\" and your phone should return to the homescreen as normal.");
+        return true;
+    }
+    QMessageBox detailsMessageBox;
+    detailsMessageBox.setWindowTitle("Error!");
+    detailsMessageBox.setIcon(QMessageBox::Critical);
+    detailsMessageBox.setText(lastLine + "\n" + secondLastLine);
+    detailsMessageBox.setTextInteractionFlags(Qt::TextSelectableByMouse);
+    detailsMessageBox.setDetailedText(errorOutput + "\n" + output);
+    detailsMessageBox.exec();
+    return false;
 }

@@ -92,6 +92,23 @@ set_target_properties(PosterKitchen PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
+set(EXE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/executables")
+if(WIN32)
+    file(GLOB EXE_FILES "${EXE_PATH}/*.exe")
+    file(COPY ${EXE_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+elseif(APPLE)
+    add_custom_command(
+        TARGET PosterKitchen
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/executables/macOS
+            $<TARGET_BUNDLE_CONTENT_DIR:PosterKitchen>/Executables
+    )
+elseif(UNIX)
+    file(GLOB EXE_FILES "${EXE_PATH}/*_linux")
+    file(COPY ${EXE_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+endif()
+
 include(GNUInstallDirs)
 install(TARGETS PosterKitchen
     BUNDLE DESTINATION .
