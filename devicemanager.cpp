@@ -262,30 +262,11 @@ void DeviceManager::applyTweaks(QLabel* statusLabel) {
 }
 
 bool DeviceManager::restoreBackupToDevice(const std::string& udid, const std::string& backupDirectory) {
-    QString exe_name = "idevicebackup2";
-#ifdef _WIN32
-    // Unimplemented
-    return false;
-#elif __linux__
-    // Unimplemented
-    return false;
-#elif __APPLE__
-    // macOS
-    exe_name = QCoreApplication::applicationDirPath() + "/../Executables/" + exe_name;
-#if defined(__arm64__)
-    // arm
-    exe_name += "_macOS_arm";
-#else
-    // intel
-    return false;
-#endif
-#endif
     QStringList arguments;
-    arguments << "-u" << QString::fromStdString(udid) << "-s" << "Backup" << "restore" << "--system" << "--skip-apps" << QString::fromStdString(backupDirectory);
+    arguments << "--idevicebackup2" << "-u" << QString::fromStdString(udid) << "-s" << "Backup" << "restore" << "--system" << "--skip-apps" << QString::fromStdString(backupDirectory);
 
     QProcess process;
-    qDebug() << "using: " << exe_name;
-    process.start(exe_name, arguments);
+    process.start(QCoreApplication::applicationFilePath(), arguments);
     process.waitForFinished(-1);
 
     QByteArray output = process.readAllStandardOutput();

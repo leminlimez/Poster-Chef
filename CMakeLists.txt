@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(PosterKitchen VERSION 0.1 LANGUAGES CXX)
+project(PosterKitchen VERSION 0.1 LANGUAGES C CXX)
 
 # include(ExternalProject)
 
@@ -13,6 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(libimobiledevice REQUIRED IMPORTED_TARGET libimobiledevice-1.0)
+pkg_check_modules(libimobiledevice-glue REQUIRED IMPORTED_TARGET libimobiledevice-glue-1.0)
 pkg_check_modules(openssl REQUIRED IMPORTED_TARGET openssl)
 
 add_library(libimobiledevice STATIC IMPORTED)
@@ -51,6 +52,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         posterboardmanager.h posterboardmanager.cpp
         tendiesfile.h tendiesfile.cpp
         CreateBackup.cpp CreateBackup.h
+        proc_modules/idevicebackup2.c proc_modules/idevicebackup2.h proc_modules/endianness.h
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET PosterKitchen APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -74,8 +76,10 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
+# target_link_libraries(idevicebackup2 PRIVATE PkgConfig::libimobiledevice)
 target_link_libraries(PosterKitchen PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(PosterKitchen PRIVATE PkgConfig::libimobiledevice)
+target_link_libraries(PosterKitchen PRIVATE PkgConfig::libimobiledevice-glue)
 target_link_libraries(PosterKitchen PRIVATE PkgConfig::openssl)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -91,23 +95,6 @@ set_target_properties(PosterKitchen PROPERTIES
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
-
-set(EXE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/executables")
-if(WIN32)
-    file(GLOB EXE_FILES "${EXE_PATH}/*.exe")
-    file(COPY ${EXE_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-elseif(APPLE)
-    add_custom_command(
-        TARGET PosterKitchen
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_SOURCE_DIR}/executables/macOS
-            $<TARGET_BUNDLE_CONTENT_DIR:PosterKitchen>/Executables
-    )
-elseif(UNIX)
-    file(GLOB EXE_FILES "${EXE_PATH}/*_linux")
-    file(COPY ${EXE_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-endif()
 
 include(GNUInstallDirs)
 install(TARGETS PosterKitchen
