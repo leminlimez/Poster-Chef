@@ -274,7 +274,13 @@ bool DeviceManager::restoreBackupToDevice(const std::string& udid, const std::st
 
     // Split the output into lines using '\n' as the separator
     // AAA Fix using \r\n
-    QStringList outputLines = QString(output).split("\r\n");
+    QString sep;
+#if _WIN32
+    sep = "\r\n";
+#else
+    sep = "\n";
+#endif
+    QStringList outputLines = QString(output).split(sep);
 
     // Get the last two lines of the output
     QString lastLine;
@@ -286,10 +292,11 @@ bool DeviceManager::restoreBackupToDevice(const std::string& udid, const std::st
         lastLine = output;
         secondLastLine = errorOutput;
     }
+    qDebug() << "lastLine:" << lastLine;
 
     if (lastLine == "Restore Successful.")
     {
-        QMessageBox::information(nullptr, "Success!", "All done! Your device will now restart.\n\nYou should see a black loading screen after entering your passcode - it will disappear after a few seconds.\n\nImportant: If you are presented with a setup, select \"Customize\" > \"Don't transfer apps and data\" and your phone should return to the homescreen as normal.");
+        QMessageBox::information(nullptr, "Success!", "All done! Your device will now restart.\n\nRemember to turn back on Find My!\n\nImportant: If you are presented with a setup, select \"Customize\" > \"Don't transfer apps and data\" and your phone should return to the homescreen as normal.");
         return true;
     }
     QMessageBox detailsMessageBox;
