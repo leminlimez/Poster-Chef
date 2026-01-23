@@ -133,7 +133,7 @@ void processFiles(const QString &path, const QString &domainString, const QStrin
     {
         writeStringWithLength(output_file, "SysSharedContainerDomain-systemgroup.com.apple.configurationprofiles");
     }
-    else if (domainString == "PB") {
+    else if (domainString == "App-PB") {
         writeStringWithLength(output_file, "AppDomain-com.apple.PosterBoard");
     }
     else
@@ -168,7 +168,7 @@ void processFiles(const QString &path, const QString &domainString, const QStrin
         {
             hash = QString::fromStdString(calculateSHA1("SysSharedContainerDomain-systemgroup.com.apple.configurationprofiles-" + fileString.toStdString()));
         }
-        else if (domainString == "PB") {
+        else if (domainString == "App-PB") {
             hash = QString::fromStdString(calculateSHA1("AppDomain-com.apple.PosterBoard" + fileString.toStdString()));
         }
         else
@@ -352,7 +352,7 @@ bool CreateBackup::createBackup(const QString& indir, const QString& outdir, con
     {
         QString domain = indir + "/" + domainEntry;
         QString domainString = QFileInfo(domain).baseName();
-        if (domainString == "PB") {
+        if (domainString == "App-PB") {
             restorePB = true;
         }
 

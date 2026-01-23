@@ -24,7 +24,7 @@ void PosterboardManager::setResetMode(ResetMode mode, bool active) {
 
 QString PosterboardManager::getPBFolderPath() {
     // name it PB to prevent file length limits on Windows
-    QString fullpath = "PB/Library/Application Support/PRBPosterExtensionDataStore/61";
+    QString fullpath = "App-PB/Library/Application Support/PRBPosterExtensionDataStore/61";
     return fullpath;
 }
 
