@@ -30,5 +30,7 @@
         <file>icon/wallpaper.svg</file>
         <file>icon/x-lg.svg</file>
         <file>credits/LeminLimez.png</file>
+        <file>credits/big_chef.png</file>
+        <file>credits/PosterChef.ico</file>
     </qresource>
 </RCC>

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Poster Kitchen</string>
+   <string>Poster Chef</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget {
@@ -877,7 +877,7 @@ QToolButton:checked {
        <item>
         <widget class="QStackedWidget" name="pages">
          <property name="currentIndex">
-          <number>4</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="homePage">
           <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -1022,6 +1022,19 @@ QToolButton:checked {
             </widget>
            </item>
            <item>
+            <spacer name="verticalSpacer_7">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <widget class="QWidget" name="widget" native="true">
              <layout class="QHBoxLayout" name="horizontalLayout_9">
               <property name="leftMargin">
@@ -1089,13 +1102,14 @@ QToolButton:checked {
                          <property name="minimumSize">
                           <size>
                            <width>0</width>
-                           <height>35</height>
+                           <height>37</height>
                           </size>
                          </property>
                          <property name="styleSheet">
                           <string notr="true">QToolButton {
 	background-color: transparent;
 	padding: 0px;
+	padding-top: 2px;
 }</string>
                          </property>
                          <property name="text">
@@ -1103,11 +1117,11 @@ QToolButton:checked {
                          </property>
                          <property name="icon">
                           <iconset resource="resources.qrc">
-                           <normaloff>:/icon/wallpaper.svg</normaloff>:/icon/wallpaper.svg</iconset>
+                           <normaloff>:/credits/big_chef.png</normaloff>:/credits/big_chef.png</iconset>
                          </property>
                          <property name="iconSize">
                           <size>
-                           <width>150</width>
+                           <width>200</width>
                            <height>200</height>
                           </size>
                          </property>
@@ -1130,7 +1144,7 @@ QToolButton:checked {
 }</string>
                       </property>
                       <property name="text">
-                       <string notr="true">Poster Kitchen</string>
+                       <string notr="true">Poster Chef</string>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
@@ -1282,26 +1296,13 @@ QToolButton:checked {
                      <number>0</number>
                     </property>
                     <item>
-                     <spacer name="horizontalSpacer_7">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>40</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                    <item>
                      <widget class="QToolButton" name="leminBtn">
                       <property name="enabled">
                        <bool>true</bool>
                       </property>
                       <property name="minimumSize">
                        <size>
-                        <width>160</width>
+                        <width>170</width>
                         <height>35</height>
                        </size>
                       </property>
@@ -1515,26 +1516,13 @@ QToolButton:pressed {
                      <number>0</number>
                     </property>
                     <item>
-                     <spacer name="horizontalSpacer_8">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>40</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                    <item>
                      <widget class="QToolButton" name="helpFromBtn">
                       <property name="enabled">
                        <bool>true</bool>
                       </property>
                       <property name="minimumSize">
                        <size>
-                        <width>160</width>
+                        <width>170</width>
                         <height>35</height>
                        </size>
                       </property>
@@ -1545,7 +1533,7 @@ QToolButton:pressed {
 }</string>
                       </property>
                       <property name="text">
-                       <string>  With Help From</string>
+                       <string>  Additional Thanks</string>
                       </property>
                       <property name="icon">
                        <iconset resource="resources.qrc">
@@ -1668,7 +1656,7 @@ QToolButton:pressed {
            <item>
             <widget class="QLabel" name="appVersionLbl">
              <property name="text">
-              <string extracomment="Leave %VERSION %BETATAG the same">Poster Kitchen - Version 0.1 beta 1</string>
+              <string extracomment="Leave %VERSION %BETATAG the same">Poster Chef - Version 0.1 beta 1</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
