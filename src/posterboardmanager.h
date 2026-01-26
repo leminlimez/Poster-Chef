@@ -1,6 +1,9 @@
 #ifndef POSTERBOARDMANAGER_H
 #define POSTERBOARDMANAGER_H
 
+#include "tendiesfile.h"
+
+#include <vector>
 #include <QString>
 #include <QDir>
 
@@ -15,6 +18,8 @@ class PosterboardManager
 {
 public:
     static PosterboardManager& getInstance();
+
+    std::vector<TendiesFile> importedTendies;
 
     void setResetMode(ResetMode mode, bool active);
     void createResetModeFiles(QString path);

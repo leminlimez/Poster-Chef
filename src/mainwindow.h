@@ -44,6 +44,8 @@ private slots:
     void on_leminGithubBtn_clicked();
     void on_leminKoFiBtn_clicked();
 
+    // Tendies Page
+    void on_importTendiesBtn_clicked();
     void on_exploreBtn_clicked();
 
     // Reset Page
@@ -72,6 +74,9 @@ private:
 
     // Home
     void updatePhoneInfo();
+
+    // Tendies Page
+    void loadTendiesList();
 
     // Bottom bar
     void toggle_applyBtn_visibility(bool visible);

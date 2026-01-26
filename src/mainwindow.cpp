@@ -5,6 +5,7 @@
 
 #include <QURL>
 #include <QDesktopServices>
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -182,8 +183,121 @@ void MainWindow::on_leminKoFiBtn_clicked() {
     openWebPage("https://ko-fi.com/leminlimez");
 }
 
+// Tendies Page
 void MainWindow::on_exploreBtn_clicked() {
     openWebPage("https://cowabun.ga/wallpapers");
+}
+
+void MainWindow::loadTendiesList() {
+    if (PosterboardManager::getInstance().importedTendies.empty()) { return; }
+
+    // Clear the layout
+    QLayout *layout = ui->tendiesFileList->layout();
+    if (layout)
+    {
+        QLayoutItem *child;
+        while ((child = layout->takeAt(0)) != nullptr)
+        {
+            delete child->widget(); // Remove and delete the widget
+            delete child;           // Delete the layout item
+        }
+        delete layout; // Delete the layout itself
+            //        ui->themesCnt->setLayout(nullptr); // Reset the layout pointer
+    }
+
+    // Clear the widget contents (if it's a container widget)
+    const QObjectList &children = ui->tendiesFileList->children();
+    for (QObject *child : children)
+    {
+        delete child; // Delete each child widget
+    }
+
+    // Create a QVBoxLayout to arrange the widgets horizontally
+    QVBoxLayout *mainLayout = new QVBoxLayout();
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+
+    if (PosterboardManager::getInstance().importedTendies.empty())
+    {
+        QVBoxLayout *layout = new QVBoxLayout(ui->tendiesFileList);
+        QLabel *label = new QLabel("No tendies files selected, please import one.");
+        label->setAlignment(Qt::AlignCenter);
+        layout->addWidget(label);
+        ui->tendiesFileList->setFixedHeight(150);
+        ui->tendiesFileList->setLayout(layout);
+        return;
+    }
+
+    // Iterate through the tendies objects
+    int counter = 0;
+    foreach (TendiesFile tendie, PosterboardManager::getInstance().importedTendies) {
+        QWidget *widget = new QWidget();
+        QHBoxLayout *tendieLayout = new QHBoxLayout();
+        tendieLayout->setContentsMargins(0, 0, 0, 3);
+
+        // Add Title
+        QToolButton *titleBtn = new QToolButton();
+        titleBtn->setIcon(QIcon(tendie.getIcon()));
+        titleBtn->setIconSize(QSize(20, 20));
+        titleBtn->setText("   " + tendie.name);
+        titleBtn->setStyleSheet("QToolButton {\n    background-color: transparent;\n	icon-size: 20px;\n}");
+        titleBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        titleBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        tendieLayout->addWidget(titleBtn);
+
+        QSpacerItem *spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        tendieLayout->addSpacerItem(spacer);
+
+        // Add delete button
+        QToolButton *delBtn = new QToolButton();
+        delBtn->setIcon(QIcon(":/icon/trash.svg"));
+        connect(delBtn, &QToolButton::clicked, [this, widget, tendie, counter]()
+        {
+            widget->deleteLater();
+            PosterboardManager::getInstance().importedTendies.erase(PosterboardManager::getInstance().importedTendies.begin() + counter);
+            MainWindow::loadTendiesList();
+        });
+        tendieLayout->addWidget(delBtn);
+        widget->setLayout(tendieLayout);
+        mainLayout->addWidget(widget);
+        counter++;
+    }
+
+    // Create a QWidget to act as the container for the scroll area
+    QWidget *scrollWidget = new QWidget();
+    mainLayout->setAlignment(Qt::AlignTop);
+
+    // Set the main layout (containing all the widgets) on the scroll widget
+    scrollWidget->setLayout(mainLayout);
+
+    // Create a QScrollArea to hold the content widget (scrollWidget)
+    QScrollArea *scrollArea = new QScrollArea();
+    scrollArea->setWidgetResizable(true);       // Allow the content widget to resize within the scroll area
+    scrollArea->setFrameStyle(QFrame::NoFrame); // Remove the outline from the scroll area
+
+    // Set the scrollWidget as the content widget of the scroll area
+    scrollArea->setWidget(scrollWidget);
+
+    // Set the size policy of the scroll area to expand in both directions
+    scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    // Set the scroll area as the central widget of the main window
+    QVBoxLayout *scrollLayout = new QVBoxLayout();
+    scrollLayout->setContentsMargins(0, 0, 0, 0);
+    scrollLayout->addWidget(scrollArea);
+    ui->tendiesFileList->setLayout(scrollLayout);
+}
+
+void MainWindow::on_importTendiesBtn_clicked() {
+    QString selectedFile = QFileDialog::getOpenFileName(nullptr, "Select PosterBoard Files", "", "Zip Files (*.tendies)", nullptr, QFileDialog::ReadOnly);
+    if (!selectedFile.isEmpty()) {
+        TendiesFile newTendie = TendiesFile(selectedFile);
+        if (!newTendie.loaded) {
+            qDebug() << "Failed to load tendies file" << selectedFile;
+        } else {
+            PosterboardManager::getInstance().importedTendies.push_back(newTendie);
+            MainWindow::loadTendiesList();
+        }
+    }
 }
 
 // Resetting Page

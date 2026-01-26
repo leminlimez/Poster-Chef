@@ -6,6 +6,7 @@
 
 PosterboardManager::PosterboardManager() {
     // Constructor implementation
+    importedTendies = std::vector<TendiesFile>();
 }
 
 PosterboardManager &PosterboardManager::getInstance()
