@@ -20,6 +20,7 @@ PosterboardManager::~PosterboardManager() {
 }
 
 void PosterboardManager::setResetMode(ResetMode mode, bool active) {
+    qDebug() << "Resetting mode";
     reset_modes[static_cast<int>(mode)] = active;
 }
 

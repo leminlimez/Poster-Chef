@@ -286,6 +286,17 @@ void MainWindow::loadTendiesList() {
     scrollLayout->addWidget(scrollArea);
     ui->tendiesFileList->setLayout(scrollLayout);
 }
+void MainWindow::disableResetActions() {
+    ui->resetCollectionsChk->setChecked(false);
+    ui->resetMercuryChk->setChecked(false);
+    ui->resetPhotosChk->setChecked(false);
+    ui->resetGalleryCacheChk->setChecked(false);
+    for (int i = 0; i < NUM_RESET_MODES; ++i) {
+        // Cast the integer back to the enum class type
+        ResetMode mode = static_cast<ResetMode>(i);
+        PosterboardManager::getInstance().setResetMode(mode, false);
+    }
+}
 
 void MainWindow::on_importTendiesBtn_clicked() {
     QString selectedFile = QFileDialog::getOpenFileName(nullptr, "Select PosterBoard Files", "", "Zip Files (*.tendies)", nullptr, QFileDialog::ReadOnly);
@@ -295,6 +306,7 @@ void MainWindow::on_importTendiesBtn_clicked() {
             qDebug() << "Failed to load tendies file" << selectedFile;
         } else {
             PosterboardManager::getInstance().importedTendies.push_back(newTendie);
+            MainWindow::disableResetActions();
             MainWindow::loadTendiesList();
         }
     }

@@ -77,6 +77,7 @@ private:
 
     // Tendies Page
     void loadTendiesList();
+    void disableResetActions();
 
     // Bottom bar
     void toggle_applyBtn_visibility(bool visible);

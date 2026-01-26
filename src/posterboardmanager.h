@@ -7,6 +7,8 @@
 #include <QString>
 #include <QDir>
 
+#define NUM_RESET_MODES (4)
+
 enum class ResetMode {
     Collections = 0,
     MercuryPoster = 1,
@@ -28,7 +30,7 @@ private:
     PosterboardManager();
     ~PosterboardManager();
 
-    bool reset_modes[4] = {false, false, false, false};
+    bool reset_modes[NUM_RESET_MODES] = {false, false, false, false};
 
     QString getPBFolderPath();
     void createEmptyFile(QString directory, QString filename);
