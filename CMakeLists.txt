@@ -15,15 +15,19 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(libimobiledevice REQUIRED IMPORTED_TARGET libimobiledevice-1.0)
 pkg_check_modules(libimobiledevice-glue REQUIRED IMPORTED_TARGET libimobiledevice-glue-1.0)
 pkg_check_modules(openssl REQUIRED IMPORTED_TARGET openssl)
+pkg_check_modules(minizip REQUIRED IMPORTED_TARGET minizip)
 
 add_library(libimobiledevice STATIC IMPORTED)
 set_target_properties(libimobiledevice PROPERTIES
     IMPORTED_LOCATION ${CMAKE_BINARY_DIR}/vendor/libimobiledevice/
 )
-
 add_library(openssl STATIC IMPORTED)
 set_target_properties(openssl PROPERTIES
     IMPORTED_LOCATION ${CMAKE_BINARY_DIR}/vendor/openssl/
+)
+add_library(minizip STATIC IMPORTED)
+set_target_properties(minizip PROPERTIES
+    IMPORTED_LOCATION ${CMAKE_BINARY_DIR}/vendor/minizip/
 )
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
@@ -93,6 +97,7 @@ target_link_libraries(PosterChef PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(PosterChef PRIVATE PkgConfig::libimobiledevice)
 target_link_libraries(PosterChef PRIVATE PkgConfig::libimobiledevice-glue)
 target_link_libraries(PosterChef PRIVATE PkgConfig::openssl)
+target_link_libraries(PosterChef PRIVATE PkgConfig::minizip)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
