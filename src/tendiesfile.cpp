@@ -1,5 +1,7 @@
 #include "tendiesfile.h"
 
+#include "utils.h"
+
 #include <unzip.h>
 #include <QRandomGenerator>
 
@@ -82,7 +84,7 @@ QString TendiesFile::getIcon() const
 }
 
 QString TendiesFile::extract(const QString &outputDir) const {
-    QString zipOutput = QDir(outputDir).filePath(randomString(10));
+    QString zipOutput = QDir(outputDir).filePath(Utils::randomString(10));
     QDir().mkpath(zipOutput);
 
     unzFile zip = unzOpen(filepath.toUtf8().constData());
@@ -141,22 +143,4 @@ QString TendiesFile::extract(const QString &outputDir) const {
 
     unzClose(zip);
     return zipOutput;
-}
-
-QString TendiesFile::randomString(int length) const
-{
-    static const char chars[] =
-        "abcdefghijklmnopqrstuvwxyz"
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        "0123456789";
-
-    QString result;
-    result.reserve(length);
-
-    for (int i = 0; i < length; ++i) {
-        int idx = QRandomGenerator::global()->bounded(int(sizeof(chars) - 1));
-        result.append(chars[idx]);
-    }
-
-    return result;
 }

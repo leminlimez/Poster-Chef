@@ -8,6 +8,11 @@ class Utils
 {
 public:
     Utils();
+
+    static QString randomString(int length);
+    static QString generate_uuid_v4();
+    static bool createDirectory(const QString &dirPath);
+    static bool copyDirectory(QString source, QString dest);
 };
 
 class Version {

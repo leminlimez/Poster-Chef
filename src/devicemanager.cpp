@@ -16,6 +16,8 @@
 #include <QProcess>
 #include <QStandardPaths>
 
+#define CLEANUP_FOLDERS (true)
+
 DeviceManager::DeviceManager() {
     // Constructor implementation
     currentDevice = std::nullopt;
@@ -294,7 +296,7 @@ int DeviceManager::createSkipSetupFiles(QDir path) {
 
     // Write to file
     QString parentPath = path.absoluteFilePath("ConfigProfileDomain/Library/ConfigurationProfiles");
-    createDirectory(parentPath);
+    Utils::createDirectory(parentPath);
     QString ccdFilePath = parentPath + "/CloudConfigurationDetails.plist";
     std::ofstream out(ccdFilePath.toStdString(), std::ios::binary);
     if (!out) {
@@ -319,7 +321,7 @@ int DeviceManager::createSkipSetupFiles(QDir path) {
     plist_free(purplebuddy);
 
     QString pbParentPath = path.absoluteFilePath("ManagedPreferencesDomain/mobile");
-    createDirectory(pbParentPath);
+    Utils::createDirectory(pbParentPath);
     QString pbFilePath = pbParentPath + "/com.apple.purplebuddy.plist";
     std::ofstream pbout(pbFilePath.toStdString(), std::ios::binary);
     if (!pbout) {
@@ -342,13 +344,16 @@ void DeviceManager::applyTweaks(QLabel* statusLabel) {
     if (workspace.exists()) {
         workspace.removeRecursively();
     }
-    if (!createDirectory(workspacePath)) {
+    if (!Utils::createDirectory(workspacePath)) {
         statusLabel->setText("Failed to create workspace at " + workspacePath);
         return;
     }
     // Create tweak files
     statusLabel->setText("Generating files...");
-    PosterboardManager::getInstance().createResetModeFiles(workspacePath);
+    bool removes = PosterboardManager::getInstance().createResetModeFiles(workspacePath);
+    if (!removes) {
+        PosterboardManager::getInstance().generateTendiesFiles(workspacePath);
+    }
     if (skipSetup) {
         if (createSkipSetupFiles(workspace) != 0) {
             statusLabel->setText("Failed to create Skip Setup files!");
@@ -370,6 +375,12 @@ void DeviceManager::applyTweaks(QLabel* statusLabel) {
     statusLabel->setText("Restoring backup to device...");
 
     auto success = DeviceManager::restoreBackupToDevice(*DeviceManager::getCurrentUUID(), QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString());
+    // Clean up
+    if (CLEANUP_FOLDERS) {
+        workspace.removeRecursively();
+        QDir(backupDirectoryPath).removeRecursively();
+    }
+
     if (success) {
         statusLabel->setText("Done!");
     } else {

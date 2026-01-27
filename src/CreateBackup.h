@@ -6,8 +6,6 @@
 #include <QString>
 #include <string>
 
-bool createDirectory(const QString &dirPath);
-
 class CreateBackup
 {
 public:

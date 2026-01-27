@@ -69,6 +69,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/proc_modules/idevicebackup2.c src/proc_modules/idevicebackup2.h src/proc_modules/endianness.h
         ${app_icon_resource_windows}
         ${app_icon_macos}
+        src/utils.cpp
+        src/plistmanager.cpp src/plistmanager.h
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET PosterChef APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

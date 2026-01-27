@@ -24,7 +24,8 @@ public:
     std::vector<TendiesFile> importedTendies;
 
     void setResetMode(ResetMode mode, bool active);
-    void createResetModeFiles(QString path);
+    bool createResetModeFiles(QString path);
+    void generateTendiesFiles(QString path);
 
 private:
     PosterboardManager();
@@ -34,6 +35,9 @@ private:
 
     QString getPBFolderPath();
     void createEmptyFile(QString directory, QString filename);
+    void updateRandomizedID(const QFileInfo &file, const int randomizedID);
+    void recursiveModify(const QString &path, const QString &resultPath);
+    void recursiveModify(const QString &path, const QString &resultPath, const bool isAdding, const int randomizedID);
 };
 
 #endif // POSTERBOARDMANAGER_H

@@ -4,6 +4,7 @@
 // from CowabungaLiteWindows: https://github.com/Avangelista/CowabungaLiteWindows/blob/main/CreateBackup.cpp
 
 #include "CreateBackup.h"
+#include "utils.h"
 #include <QDir>
 #include <iostream>
 #include <sstream>
@@ -194,25 +195,6 @@ void processFiles(const QString &path, const QString &domainString, const QStrin
     }
 }
 
-bool createDirectory(const QString &dirPath)
-{
-    try
-    {
-        if (QDir().mkpath(dirPath))
-            return true;
-        else
-        {
-            qDebug() << "Failed to create directory.";
-            return false;
-        }
-    }
-    catch (const std::exception &ex)
-    {
-        qDebug() << "Failed to create directory:" << ex.what();
-        return false;
-    }
-}
-
 bool removeDirectoryIfExists(const QString &dirPath)
 {
     if (QFileInfo::exists(dirPath) && QFileInfo(dirPath).isDir())
@@ -327,7 +309,7 @@ cleanup:
 bool CreateBackup::createBackup(const QString& indir, const QString& outdir, const std::string udid)
 {
     removeDirectoryIfExists(outdir);
-    createDirectory(outdir);
+    Utils::createDirectory(outdir);
 
     // NOTE: Manifest.mbdb tracks the locations and SHA1 hashes of each file in the backup
     QFile output_file(outdir + "/Manifest.mbdb");

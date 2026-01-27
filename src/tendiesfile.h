@@ -18,7 +18,6 @@ public:
 
 private:
     void readFromZip();
-    QString randomString(int length) const;
 };
 
 #endif // TENDIESFILE_H
