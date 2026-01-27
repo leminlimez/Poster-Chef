@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     ui->pages->setCurrentIndex(static_cast<int>(Page::Home));
     ui->applyStatusLbl->hide();
+    ui->ignoreFrameLimitChk->hide();
     MainWindow::refreshDevices();
 }
 
@@ -68,7 +69,7 @@ void MainWindow::refreshDevices()
 
         // show all pages
         ui->tendiesPageBtn->show();
-        ui->videoPageBtn->show();
+        ui->videoPageBtn->hide();
         ui->resettingPageBtn->show();
     }
 

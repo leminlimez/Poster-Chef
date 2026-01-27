@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
         idevicebackup2_main(argc-1, argv+1);
     } else {
         QApplication a(argc, argv);
+        a.setWindowIcon(QIcon(":/credits/big_chef.png"));
 
         QTranslator translator;
         const QStringList uiLanguages = QLocale::system().uiLanguages();
