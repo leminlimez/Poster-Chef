@@ -1,0 +1,10 @@
+{
+  "name": "posterchef",
+  "version": "0.1",
+  "dependencies": [
+    "libimobiledevice",
+    "libimobiledevice-glue",
+    "openssl",
+    "minizip"
+  ]
+}
