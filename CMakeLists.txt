@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.5)
-export MACOSX_DEPLOYMENT_TARGET=11.0
 
 project(PosterChef VERSION 0.1 LANGUAGES C CXX)
 
