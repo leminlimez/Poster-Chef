@@ -10,6 +10,7 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_OSX_DEPLOYMENT_TARGET 11)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(libimobiledevice REQUIRED IMPORTED_TARGET libimobiledevice-1.0)
