@@ -15,12 +15,6 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET ${OSX_TARGET})
 
 set(EXTERNAL_INSTALL_DIR ${CMAKE_BINARY_DIR}/external)
 
-# disable searching macports
-set(ENV{PKG_CONFIG_LIBDIR}
-    "${EXTERNAL_INSTALL_DIR}/lib/pkgconfig"
-)
-set(ENV{PKG_CONFIG_PATH} "")
-
 ExternalProject_Add(openssl_dl
   GIT_REPOSITORY https://github.com/openssl/openssl.git
   GIT_TAG master
@@ -58,6 +52,7 @@ ExternalProject_Add(libusbmuxd_dl
     <SOURCE_DIR>/autogen.sh
       --prefix=<INSTALL_DIR>
       --host=arm-apple-darwin
+      --disable-shared --enable-static
 
   BUILD_COMMAND make -j${CMAKE_BUILD_PARALLEL_LEVEL}
   INSTALL_COMMAND make install
@@ -81,6 +76,7 @@ ExternalProject_Add(libplist_dl
       --prefix=<INSTALL_DIR>
       --host=arm-apple-darwin
       --without-cython
+      --disable-shared --enable-static
   UPDATE_COMMAND ""
   BUILD_COMMAND make -j${CMAKE_BUILD_PARALLEL_LEVEL}
   INSTALL_COMMAND make install
@@ -103,6 +99,7 @@ ExternalProject_Add(libimobiledevice-glue_dl
       --prefix=<INSTALL_DIR>
       --host=arm-apple-darwin
       --without-cython
+      --disable-shared --enable-static
   BUILD_COMMAND make -j${CMAKE_BUILD_PARALLEL_LEVEL}
   INSTALL_COMMAND make install
   UPDATE_COMMAND ""
@@ -126,6 +123,7 @@ ExternalProject_Add(libimobiledevice_dl
       --prefix=<INSTALL_DIR>
       --host=arm-apple-darwin
       --without-cython
+      --disable-shared --enable-static
   BUILD_COMMAND make -j${CMAKE_BUILD_PARALLEL_LEVEL}
   INSTALL_COMMAND make install
   UPDATE_COMMAND ""
@@ -140,7 +138,9 @@ ExternalProject_Add(bzip2_dl
   GIT_SHALLOW ON
   PREFIX ${CMAKE_BINARY_DIR}/bzip2
   INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
-  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_DIR} -DCMAKE_OSX_DEPLOYMENT_TARGET=${OSX_TARGET}
+  CMAKE_ARGS
+    -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_DIR} -DCMAKE_OSX_DEPLOYMENT_TARGET=${OSX_TARGET}
+    -DENABLE_STATIC_LIB=ON -DENABLE_SHARED_LIB=OFF -DENABLE_LIB_ONLY=ON
   UPDATE_COMMAND ""
 )
 ExternalProject_Add(zstd_dl
@@ -244,14 +244,10 @@ else()
 endif()
 
 # Linking the built libraries
-set(OPENSSL_LIBRARIES 
-    ${EXTERNAL_INSTALL_DIR}/lib/libssl.a 
-    ${EXTERNAL_INSTALL_DIR}/lib/libcrypto.a
-)
 target_include_directories(PosterChef PRIVATE ${EXTERNAL_INSTALL_DIR}/include)
 target_link_directories(PosterChef PRIVATE ${EXTERNAL_INSTALL_DIR}/lib)
-target_link_libraries(PosterChef PRIVATE plist-2.0 imobiledevice-1.0 usbmuxd-2.0 ssl)
-target_link_libraries(PosterChef PRIVATE bz2 zstd z-ng minizip)
+# target_link_libraries(PosterChef PRIVATE plist-2.0 imobiledevice-1.0 usbmuxd-2.0 ssl)
+# target_link_libraries(PosterChef PRIVATE bz2 zstd z-ng minizip)
 
 add_dependencies(PosterChef openssl_dl)
 add_dependencies(PosterChef libimobiledevice-glue_dl)
@@ -261,12 +257,26 @@ add_dependencies(PosterChef bzip2_dl zlib_dl zstd_dl)
 add_dependencies(PosterChef minizip_dl)
 
 target_link_libraries(PosterChef PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+set(OPENSSL_LIBRARIES
+    ${EXTERNAL_INSTALL_DIR}/lib/libssl.a
+    ${EXTERNAL_INSTALL_DIR}/lib/libcrypto.a
+)
 target_link_libraries(PosterChef PRIVATE ${OPENSSL_LIBRARIES})
-target_link_libraries(PosterChef PRIVATE ${EXTERNAL_INSTALL_DIR}/lib/libplist-2.0.a)
-target_link_libraries(PosterChef PRIVATE ${EXTERNAL_INSTALL_DIR}/lib/libplist++-2.0.a)
-target_link_libraries(PosterChef PRIVATE ${EXTERNAL_INSTALL_DIR}/lib/libminizip.a)
-target_link_libraries(PosterChef PRIVATE ${EXTERNAL_INSTALL_DIR}/lib/libimobiledevice-1.0.a)
-target_link_libraries(PosterChef PRIVATE ${EXTERNAL_INSTALL_DIR}/lib/libimobiledevice-glue-1.0.a)
+set(LIBIMOBILEDEVICE_LIBRARIES
+    ${EXTERNAL_INSTALL_DIR}/lib/libplist-2.0.a
+    ${EXTERNAL_INSTALL_DIR}/lib/libplist++-2.0.a
+    ${EXTERNAL_INSTALL_DIR}/lib/libusbmuxd-2.0.a
+    ${EXTERNAL_INSTALL_DIR}/lib/libimobiledevice-1.0.a
+    ${EXTERNAL_INSTALL_DIR}/lib/libimobiledevice-glue-1.0.a
+)
+target_link_libraries(PosterChef PRIVATE ${LIBIMOBILEDEVICE_LIBRARIES})
+set(MINIZIP_LIBRARIES
+    ${EXTERNAL_INSTALL_DIR}/lib/libz-ng.a
+    ${EXTERNAL_INSTALL_DIR}/lib/libzstd.a
+    ${EXTERNAL_INSTALL_DIR}/lib/libbz2_static.a
+    ${EXTERNAL_INSTALL_DIR}/lib/libminizip.a
+)
+target_link_libraries(PosterChef PRIVATE ${MINIZIP_LIBRARIES})
 
 # Finish building
 set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.leemin.PosterChef)
