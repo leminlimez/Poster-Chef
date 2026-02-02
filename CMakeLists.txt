@@ -15,26 +15,69 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET ${OSX_TARGET})
 
 set(EXTERNAL_INSTALL_DIR ${CMAKE_BINARY_DIR}/external)
 
+# Build OpenSSL
+if (APPLE)
+    set(OPENSSL_CONFIG_CMD
+        env
+          MACOSX_DEPLOYMENT_TARGET=${OSX_TARGET}
+          CC=clang
+          CFLAGS=-mmacosx-version-min=${OSX_TARGET}
+          CXXFLAGS=-mmacosx-version-min=${OSX_TARGET}
+        <SOURCE_DIR>/Configure
+          darwin64-arm64-cc
+          no-shared
+          --prefix=<INSTALL_DIR>
+    )
+elseif (WIN32)
+    set(OPENSSL_CONFIG_CMD
+        <SOURCE_DIR>/Configure
+        mingw
+        no-shared
+        --prefix=<INSTALL_DIR>
+    )
+else()
+    set(OPENSSL_CONFIG_CMD
+        <SOURCE_DIR>/Configure
+        no-shared
+        --prefix=<INSTALL_DIR>
+    )
+endif()
 ExternalProject_Add(openssl_dl
   GIT_REPOSITORY https://github.com/openssl/openssl.git
   GIT_TAG master
   GIT_SHALLOW ON
   PREFIX ${CMAKE_BINARY_DIR}/openssl
   INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
-  CONFIGURE_COMMAND
-    env
-      MACOSX_DEPLOYMENT_TARGET=${OSX_TARGET}
-      CC=clang
-      CFLAGS=-mmacosx-version-min=${OSX_TARGET}
-      CXXFLAGS=-mmacosx-version-min=${OSX_TARGET}
-    <SOURCE_DIR>/Configure
-      darwin64-arm64-cc
-      no-shared
-      --prefix=<INSTALL_DIR>
+  CONFIGURE_COMMAND ${OPENSSL_CONFIG_CMD}
   UPDATE_COMMAND ""
   BUILD_COMMAND make -j${CMAKE_BUILD_PARALLEL_LEVEL}
   INSTALL_COMMAND make install
 )
+
+# Libimobiledevice Libs Compiling
+if (APPLE)
+    set(LIBI_CONFIG_CMD
+        env
+          MACOSX_DEPLOYMENT_TARGET=${OSX_TARGET}
+          CC=clang
+          CXX=clang++
+          CFLAGS=-mmacosx-version-min=${OSX_TARGET}
+          CXXFLAGS=-mmacosx-version-min=${OSX_TARGET}
+          LDFLAGS=-mmacosx-version-min=${OSX_TARGET}
+        <SOURCE_DIR>/autogen.sh
+          --prefix=<INSTALL_DIR>
+          --host=arm-apple-darwin
+          --disable-shared --enable-static
+          --without-cython
+    )
+else()
+    set(LIBI_CONFIG_CMD
+        <SOURCE_DIR>/autogen.sh
+          --prefix=<INSTALL_DIR>
+          --disable-shared --enable-static
+          --without-cython
+    )
+endif()
 ExternalProject_Add(libusbmuxd_dl
   GIT_REPOSITORY https://github.com/libimobiledevice/libusbmuxd.git
   GIT_TAG 2.0.2
@@ -43,16 +86,7 @@ ExternalProject_Add(libusbmuxd_dl
   PREFIX ${CMAKE_BINARY_DIR}/libusbmuxd
   INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
 
-  CONFIGURE_COMMAND
-    env
-      MACOSX_DEPLOYMENT_TARGET=${OSX_TARGET}
-      CC=clang
-      CFLAGS=-mmacosx-version-min=${OSX_TARGET}
-      LDFLAGS=-mmacosx-version-min=${OSX_TARGET}
-    <SOURCE_DIR>/autogen.sh
-      --prefix=<INSTALL_DIR>
-      --host=arm-apple-darwin
-      --disable-shared --enable-static
+  CONFIGURE_COMMAND ${LIBI_CONFIG_CMD}
 
   BUILD_COMMAND make -j${CMAKE_BUILD_PARALLEL_LEVEL}
   INSTALL_COMMAND make install
@@ -64,19 +98,7 @@ ExternalProject_Add(libplist_dl
   GIT_SHALLOW ON
   PREFIX ${CMAKE_BINARY_DIR}/libplist
   INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
-  CONFIGURE_COMMAND
-    env
-      MACOSX_DEPLOYMENT_TARGET=${OSX_TARGET}
-      CC=clang
-      CXX=clang++
-      CFLAGS=-mmacosx-version-min=${OSX_TARGET}
-      CXXFLAGS=-mmacosx-version-min=${OSX_TARGET}
-      LDFLAGS=-mmacosx-version-min=${OSX_TARGET}
-    <SOURCE_DIR>/autogen.sh
-      --prefix=<INSTALL_DIR>
-      --host=arm-apple-darwin
-      --without-cython
-      --disable-shared --enable-static
+  CONFIGURE_COMMAND ${LIBI_CONFIG_CMD}
   UPDATE_COMMAND ""
   BUILD_COMMAND make -j${CMAKE_BUILD_PARALLEL_LEVEL}
   INSTALL_COMMAND make install
@@ -87,19 +109,7 @@ ExternalProject_Add(libimobiledevice-glue_dl
   GIT_SHALLOW ON
   PREFIX ${CMAKE_BINARY_DIR}/libimobiledevice_glue
   INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
-  CONFIGURE_COMMAND
-    env
-      MACOSX_DEPLOYMENT_TARGET=${OSX_TARGET}
-      CC=clang
-      CXX=clang++
-      CFLAGS=-mmacosx-version-min=${OSX_TARGET}
-      CXXFLAGS=-mmacosx-version-min=${OSX_TARGET}
-      LDFLAGS=-mmacosx-version-min=${OSX_TARGET}
-    <SOURCE_DIR>/autogen.sh
-      --prefix=<INSTALL_DIR>
-      --host=arm-apple-darwin
-      --without-cython
-      --disable-shared --enable-static
+  CONFIGURE_COMMAND ${LIBI_CONFIG_CMD}
   BUILD_COMMAND make -j${CMAKE_BUILD_PARALLEL_LEVEL}
   INSTALL_COMMAND make install
   UPDATE_COMMAND ""
@@ -111,19 +121,7 @@ ExternalProject_Add(libimobiledevice_dl
   GIT_SHALLOW ON
   PREFIX ${CMAKE_BINARY_DIR}/libimobiledevice
   INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
-  CONFIGURE_COMMAND
-    env
-      MACOSX_DEPLOYMENT_TARGET=${OSX_TARGET}
-      CC=clang
-      CXX=clang++
-      CFLAGS=-mmacosx-version-min=${OSX_TARGET}
-      CXXFLAGS=-mmacosx-version-min=${OSX_TARGET}
-      LDFLAGS=-mmacosx-version-min=${OSX_TARGET}
-    <SOURCE_DIR>/autogen.sh
-      --prefix=<INSTALL_DIR>
-      --host=arm-apple-darwin
-      --without-cython
-      --disable-shared --enable-static
+  CONFIGURE_COMMAND ${LIBI_CONFIG_CMD}
   BUILD_COMMAND make -j${CMAKE_BUILD_PARALLEL_LEVEL}
   INSTALL_COMMAND make install
   UPDATE_COMMAND ""
