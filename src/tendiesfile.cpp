@@ -2,7 +2,7 @@
 
 #include "utils.h"
 
-#include <unzip.h>
+#include <minizip/unzip.h>
 #include <QRandomGenerator>
 
 TendiesFile::TendiesFile(const QString &path) : filepath(path),
