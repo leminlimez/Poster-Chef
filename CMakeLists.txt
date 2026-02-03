@@ -29,7 +29,7 @@ if (APPLE)
           --prefix=<INSTALL_DIR>
     )
 elseif (WIN32)
-    set(OPENSSL_CONFIG_CMD
+    set(OPENSSL_CONFIG_CMD perl
         <SOURCE_DIR>/Configure
         mingw
         no-shared
@@ -70,13 +70,29 @@ if (APPLE)
           --disable-shared --enable-static
           --without-cython
     )
-else()
-    set(LIBI_CONFIG_CMD
+elseif (WIN32)
+    set(LIBI_CONFIG_CMD mingw64
         <SOURCE_DIR>/autogen.sh
+          CC=gcc CXX=g++
           --prefix=<INSTALL_DIR>
           --disable-shared --enable-static
           --without-cython
     )
+else()
+    set(LIBI_CONFIG_CMD
+        <SOURCE_DIR>/autogen.sh
+          CC=gcc CXX=g++
+          --prefix=<INSTALL_DIR>
+          --disable-shared --enable-static
+          --without-cython
+    )
+endif()
+if (WIN32)
+    set(LIBI_BUILD_CMD ${CMAKE_COMMAND} --build <BINARY_DIR> --config Release)
+    set(LIBI_INSTALL_CMD ${CMAKE_COMMAND} --install <BINARY_DIR> --config Release)
+else()
+    set(LIBI_BUILD_CMD make -j${CMAKE_BUILD_PARALLEL_LEVEL})
+    set(LIBI_INSTALL_CMD make install)
 endif()
 ExternalProject_Add(libusbmuxd_dl
   GIT_REPOSITORY https://github.com/libimobiledevice/libusbmuxd.git
@@ -88,8 +104,8 @@ ExternalProject_Add(libusbmuxd_dl
 
   CONFIGURE_COMMAND ${LIBI_CONFIG_CMD}
 
-  BUILD_COMMAND make -j${CMAKE_BUILD_PARALLEL_LEVEL}
-  INSTALL_COMMAND make install
+  BUILD_COMMAND ${LIBI_BUILD_CMD}
+  INSTALL_COMMAND ${LIBI_INSTALL_CMD}
   UPDATE_COMMAND ""
 )
 ExternalProject_Add(libplist_dl
@@ -100,8 +116,8 @@ ExternalProject_Add(libplist_dl
   INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
   CONFIGURE_COMMAND ${LIBI_CONFIG_CMD}
   UPDATE_COMMAND ""
-  BUILD_COMMAND make -j${CMAKE_BUILD_PARALLEL_LEVEL}
-  INSTALL_COMMAND make install
+  BUILD_COMMAND ${LIBI_BUILD_CMD}
+  INSTALL_COMMAND ${LIBI_INSTALL_CMD}
 )
 ExternalProject_Add(libimobiledevice-glue_dl
   GIT_REPOSITORY https://github.com/libimobiledevice/libimobiledevice-glue.git
@@ -110,8 +126,8 @@ ExternalProject_Add(libimobiledevice-glue_dl
   PREFIX ${CMAKE_BINARY_DIR}/libimobiledevice_glue
   INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
   CONFIGURE_COMMAND ${LIBI_CONFIG_CMD}
-  BUILD_COMMAND make -j${CMAKE_BUILD_PARALLEL_LEVEL}
-  INSTALL_COMMAND make install
+  BUILD_COMMAND ${LIBI_BUILD_CMD}
+  INSTALL_COMMAND ${LIBI_INSTALL_CMD}
   UPDATE_COMMAND ""
   DEPENDS libplist_dl
 )
@@ -122,45 +138,25 @@ ExternalProject_Add(libimobiledevice_dl
   PREFIX ${CMAKE_BINARY_DIR}/libimobiledevice
   INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
   CONFIGURE_COMMAND ${LIBI_CONFIG_CMD}
-  BUILD_COMMAND make -j${CMAKE_BUILD_PARALLEL_LEVEL}
-  INSTALL_COMMAND make install
+  BUILD_COMMAND ${LIBI_BUILD_CMD}
+  INSTALL_COMMAND ${LIBI_INSTALL_CMD}
   UPDATE_COMMAND ""
   DEPENDS libplist_dl openssl_dl libusbmuxd_dl
 )
 ExternalProject_Add_StepDependencies(libimobiledevice_dl build libplist_dl openssl_dl libusbmuxd_dl)
 
 # Minizip building and dependencies
-ExternalProject_Add(bzip2_dl
-  GIT_REPOSITORY https://gitlab.com/bzip2/bzip2.git
-  GIT_TAG master
-  GIT_SHALLOW ON
-  PREFIX ${CMAKE_BINARY_DIR}/bzip2
-  INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
-  CMAKE_ARGS
-    -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_DIR} -DCMAKE_OSX_DEPLOYMENT_TARGET=${OSX_TARGET}
-    -DENABLE_STATIC_LIB=ON -DENABLE_SHARED_LIB=OFF -DENABLE_LIB_ONLY=ON
-  UPDATE_COMMAND ""
-)
-ExternalProject_Add(zstd_dl
-  GIT_REPOSITORY https://github.com/facebook/zstd.git
-  GIT_TAG dev
-  GIT_SHALLOW ON
-  PREFIX ${CMAKE_BINARY_DIR}/zstd
-  INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
-  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_DIR} -DCMAKE_OSX_DEPLOYMENT_TARGET=${OSX_TARGET}
-  UPDATE_COMMAND ""
-)
-ExternalProject_Add(zlib_dl
-  GIT_REPOSITORY https://github.com/zlib-ng/zlib-ng.git
-  GIT_TAG develop
-  GIT_SHALLOW ON
-  PREFIX ${CMAKE_BINARY_DIR}/zlib
-  INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
-  CMAKE_ARGS
-    -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_DIR}
-    -DCMAKE_OSX_DEPLOYMENT_TARGET=${OSX_TARGET}
-  UPDATE_COMMAND ""
-)
+if (APPLE)
+    set(APPLE_CMAKE_ARGS
+        -DCMAKE_OSX_DEPLOYMENT_TARGET=${OSX_TARGET}
+    )
+elseif(WIN32)
+    set(APPLE_CMAKE_ARGS
+        -DMZ_BZIP2=OFF -DMZ_LZMA=OFF -A x64
+    )
+else()
+    set(APPLE_CMAKE_ARGS "")
+endif()
 ExternalProject_Add(minizip_dl
   GIT_REPOSITORY https://github.com/zlib-ng/minizip-ng.git
   GIT_TAG master
@@ -169,12 +165,92 @@ ExternalProject_Add(minizip_dl
   INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
   CMAKE_ARGS
     -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_DIR}
-    -DCMAKE_OSX_DEPLOYMENT_TARGET=${OSX_TARGET}
-    -DMZ_LZMA=OFF -DMZ_ICONV=OFF -DMZ_LIBCOMP=OFF
+    -D MZ_FORCE_FETCH_LIBS=ON -DENABLE_STATIC_LIB=ON -DENABLE_SHARED_LIB=OFF
+    ${APPLE_CMAKE_ARGS}
   UPDATE_COMMAND ""
-  DEPENDS bzip2_dl zstd_dl zlib_dl
 )
-ExternalProject_Add_StepDependencies(minizip_dl build bzip2_dl zstd_dl zlib_dl)
+# if(WIN32)
+#     set(APPLE_CMAKE_ARGS "")
+#     set(BZIP_STATUS OFF)
+#     set(BZIP_REQ "")
+#     set(BZIP_LOC "")
+#     ExternalProject_Add(minizip_dl
+#       GIT_REPOSITORY https://github.com/zlib-ng/minizip-ng.git
+#       GIT_TAG master
+#       GIT_SHALLOW ON
+#       PREFIX ${CMAKE_BINARY_DIR}/minizip
+#       INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
+#       CMAKE_ARGS
+#         -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_DIR}
+#         -D MZ_FORCE_FETCH_LIBS=ON
+#       UPDATE_COMMAND ""
+#     )
+# else()
+#     set(APPLE_CMAKE_ARGS
+#         -DCMAKE_OSX_DEPLOYMENT_TARGET=${OSX_TARGET}
+#     )
+#     ExternalProject_Add(bzip2_dl
+#       GIT_REPOSITORY https://gitlab.com/bzip2/bzip2.git
+#       GIT_TAG master
+#       GIT_SHALLOW ON
+#       PREFIX ${CMAKE_BINARY_DIR}/bzip2
+#       INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
+#       CMAKE_ARGS
+#         -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_DIR}
+#         ${APPLE_CMAKE_ARGS}
+#         -DENABLE_STATIC_LIB=ON -DENABLE_SHARED_LIB=OFF -DENABLE_LIB_ONLY=ON
+#       UPDATE_COMMAND ""
+#     )
+#     set(BZIP_STATUS ON)
+#     set(BZIP_REQ bzip2_dl zlib_dl zstd_dl)
+#     set(BZIP_LOC
+#         ${EXTERNAL_INSTALL_DIR}/lib/libz-ng.a
+#         ${EXTERNAL_INSTALL_DIR}/lib/libzstd.a
+#         ${EXTERNAL_INSTALL_DIR}/lib/libbz2_static.a
+#     )
+#     ExternalProject_Add(zstd_dl
+#       GIT_REPOSITORY https://github.com/facebook/zstd.git
+#       GIT_TAG dev
+#       GIT_SHALLOW ON
+#       PREFIX ${CMAKE_BINARY_DIR}/zstd
+#       INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
+#       CMAKE_ARGS
+#         -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_DIR}
+#         ${APPLE_CMAKE_ARGS}
+#         -DZSTD_BUILD_PROGRAMS=OFF
+#         -DZSTD_BUILD_TESTS=OFF
+#         -DZSTD_BUILD_SHARED=OFF
+#       UPDATE_COMMAND ""
+#     )
+#     ExternalProject_Add(zlib_dl
+#       GIT_REPOSITORY https://github.com/zlib-ng/zlib-ng.git
+#       GIT_TAG develop
+#       GIT_SHALLOW ON
+#       PREFIX ${CMAKE_BINARY_DIR}/zlib
+#       INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
+#       CMAKE_ARGS
+#         -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_DIR}
+#         ${APPLE_CMAKE_ARGS}
+#         -DZLIB_COMPAT=ON
+#         -DZLIB_ENABLE_TESTS=OFF
+#       UPDATE_COMMAND ""
+#     )
+#     ExternalProject_Add(minizip_dl
+#       GIT_REPOSITORY https://github.com/zlib-ng/minizip-ng.git
+#       GIT_TAG master
+#       GIT_SHALLOW ON
+#       PREFIX ${CMAKE_BINARY_DIR}/minizip
+#       INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
+#       CMAKE_ARGS
+#         -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_DIR}
+#         ${APPLE_CMAKE_ARGS}
+#         -DMZ_LZMA=OFF -DMZ_ICONV=OFF -DMZ_LIBCOMP=OFF
+#         -DMZ_BZIP2=${BZIP_STATUS}
+#       UPDATE_COMMAND ""
+#       DEPENDS ${BZIP_REQ}
+#     )
+#     ExternalProject_Add_StepDependencies(minizip_dl build ${BZIP_REQ})
+# endif()
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
@@ -251,7 +327,9 @@ add_dependencies(PosterChef openssl_dl)
 add_dependencies(PosterChef libimobiledevice-glue_dl)
 add_dependencies(PosterChef libplist_dl libusbmuxd_dl)
 add_dependencies(PosterChef libimobiledevice_dl)
-add_dependencies(PosterChef bzip2_dl zlib_dl zstd_dl)
+# if (!WIN32)
+#     add_dependencies(PosterChef ${BZIP_REQ})
+# endif()
 add_dependencies(PosterChef minizip_dl)
 
 target_link_libraries(PosterChef PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
@@ -268,10 +346,11 @@ set(LIBIMOBILEDEVICE_LIBRARIES
     ${EXTERNAL_INSTALL_DIR}/lib/libimobiledevice-glue-1.0.a
 )
 target_link_libraries(PosterChef PRIVATE ${LIBIMOBILEDEVICE_LIBRARIES})
+# set(MINIZIP_LIBRARIES
+#     ${BZIP_LOC}
+#     ${EXTERNAL_INSTALL_DIR}/lib/libminizip.a
+# )
 set(MINIZIP_LIBRARIES
-    ${EXTERNAL_INSTALL_DIR}/lib/libz-ng.a
-    ${EXTERNAL_INSTALL_DIR}/lib/libzstd.a
-    ${EXTERNAL_INSTALL_DIR}/lib/libbz2_static.a
     ${EXTERNAL_INSTALL_DIR}/lib/libminizip.a
 )
 target_link_libraries(PosterChef PRIVATE ${MINIZIP_LIBRARIES})
