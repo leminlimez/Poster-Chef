@@ -40,6 +40,10 @@ private slots:
     void on_discordBtn_clicked();
     void on_phoneVersionLbl_linkActivated(const QString &link);
 
+    void on_posterRestoreBtn_clicked();
+    void on_qtBtn_clicked();
+    void on_libimobiledeviceBtn_clicked();
+
     void on_leminTwitterBtn_clicked();
     void on_leminGithubBtn_clicked();
     void on_leminKoFiBtn_clicked();

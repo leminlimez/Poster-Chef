@@ -1439,7 +1439,7 @@ QToolButton:pressed {
                       </property>
                       <property name="minimumSize">
                        <size>
-                        <width>230</width>
+                        <width>260</width>
                         <height>35</height>
                        </size>
                       </property>
@@ -1526,27 +1526,51 @@ QToolButton:pressed {
                      </widget>
                     </item>
                     <item>
-                     <widget class="QToolButton" name="posterRestoreBtn">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
+                     <widget class="QWidget" name="widget_4" native="true">
                       <property name="minimumSize">
                        <size>
-                        <width>175</width>
-                        <height>37</height>
+                        <width>380</width>
+                        <height>0</height>
                        </size>
                       </property>
-                      <property name="cursor">
-                       <cursorShape>PointingHandCursor</cursorShape>
-                      </property>
-                      <property name="toolTip">
-                       <string>dootskyre, dulark, forcequitOS, pengubow, Middo, and SerStars</string>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true">QToolButton {
+                      <layout class="QHBoxLayout" name="horizontalLayout_11">
+                       <property name="spacing">
+                        <number>0</number>
+                       </property>
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
+                       <item>
+                        <widget class="QToolButton" name="posterRestoreBtn">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>37</height>
+                          </size>
+                         </property>
+                         <property name="cursor">
+                          <cursorShape>PointingHandCursor</cursorShape>
+                         </property>
+                         <property name="toolTip">
+                          <string>dootskyre, dulark, forcequitOS, pengubow, Middo, and SerStars</string>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">QToolButton {
 	border-top-right-radius: 0px;
 	border-bottom-right-radius: 0px;
 	background: none;
@@ -1557,31 +1581,57 @@ QToolButton:pressed {
     background-color: #535353;
     color: #FFFFFF;
 }</string>
-                      </property>
-                      <property name="text">
-                       <string>PosterRestore Team</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QToolButton" name="caplaygroundBtn">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>175</width>
-                        <height>37</height>
-                       </size>
-                      </property>
-                      <property name="cursor">
-                       <cursorShape>PointingHandCursor</cursorShape>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true">QToolButton {
+                         </property>
+                         <property name="text">
+                          <string>PosterRestore Team</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QToolButton" name="qtBtn">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">QToolButton {
+	background: none;
+	border: 1px solid #3b3b3b;
+	border-radius: 0px;
+	border-left: none;
+}
+
+QToolButton:pressed {
+    background-color: #535353;
+    color: #FFFFFF;
+}</string>
+                         </property>
+                         <property name="text">
+                          <string notr="true">Qt Creator</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QToolButton" name="libimobiledeviceBtn">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>37</height>
+                          </size>
+                         </property>
+                         <property name="cursor">
+                          <cursorShape>PointingHandCursor</cursorShape>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">QToolButton {
 	border-top-left-radius: 0px;
 	border-bottom-left-radius: 0px;
 	background: none;
@@ -1593,10 +1643,13 @@ QToolButton:pressed {
     background-color: #535353;
     color: #FFFFFF;
 }</string>
-                      </property>
-                      <property name="text">
-                       <string>CAPlayground</string>
-                      </property>
+                         </property>
+                         <property name="text">
+                          <string>libimobiledevice</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
                      </widget>
                     </item>
                     <item>

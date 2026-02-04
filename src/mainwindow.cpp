@@ -174,6 +174,16 @@ void MainWindow::on_phoneVersionLbl_linkActivated(const QString &link)
     }
 }
 
+void MainWindow::on_posterRestoreBtn_clicked() {
+    openWebPage("https://discord.gg/gWtzTVhMvh");
+}
+void MainWindow::on_qtBtn_clicked() {
+    openWebPage("https://www.qt.io/development/tools");
+}
+void MainWindow::on_libimobiledeviceBtn_clicked() {
+    openWebPage("https://libimobiledevice.org");
+}
+
 void MainWindow::on_leminTwitterBtn_clicked() {
     openWebPage("https://twitter.com/LeminLimez");
 }

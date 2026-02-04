@@ -169,88 +169,6 @@ ExternalProject_Add(minizip_dl
     ${APPLE_CMAKE_ARGS}
   UPDATE_COMMAND ""
 )
-# if(WIN32)
-#     set(APPLE_CMAKE_ARGS "")
-#     set(BZIP_STATUS OFF)
-#     set(BZIP_REQ "")
-#     set(BZIP_LOC "")
-#     ExternalProject_Add(minizip_dl
-#       GIT_REPOSITORY https://github.com/zlib-ng/minizip-ng.git
-#       GIT_TAG master
-#       GIT_SHALLOW ON
-#       PREFIX ${CMAKE_BINARY_DIR}/minizip
-#       INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
-#       CMAKE_ARGS
-#         -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_DIR}
-#         -D MZ_FORCE_FETCH_LIBS=ON
-#       UPDATE_COMMAND ""
-#     )
-# else()
-#     set(APPLE_CMAKE_ARGS
-#         -DCMAKE_OSX_DEPLOYMENT_TARGET=${OSX_TARGET}
-#     )
-#     ExternalProject_Add(bzip2_dl
-#       GIT_REPOSITORY https://gitlab.com/bzip2/bzip2.git
-#       GIT_TAG master
-#       GIT_SHALLOW ON
-#       PREFIX ${CMAKE_BINARY_DIR}/bzip2
-#       INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
-#       CMAKE_ARGS
-#         -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_DIR}
-#         ${APPLE_CMAKE_ARGS}
-#         -DENABLE_STATIC_LIB=ON -DENABLE_SHARED_LIB=OFF -DENABLE_LIB_ONLY=ON
-#       UPDATE_COMMAND ""
-#     )
-#     set(BZIP_STATUS ON)
-#     set(BZIP_REQ bzip2_dl zlib_dl zstd_dl)
-#     set(BZIP_LOC
-#         ${EXTERNAL_INSTALL_DIR}/lib/libz-ng.a
-#         ${EXTERNAL_INSTALL_DIR}/lib/libzstd.a
-#         ${EXTERNAL_INSTALL_DIR}/lib/libbz2_static.a
-#     )
-#     ExternalProject_Add(zstd_dl
-#       GIT_REPOSITORY https://github.com/facebook/zstd.git
-#       GIT_TAG dev
-#       GIT_SHALLOW ON
-#       PREFIX ${CMAKE_BINARY_DIR}/zstd
-#       INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
-#       CMAKE_ARGS
-#         -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_DIR}
-#         ${APPLE_CMAKE_ARGS}
-#         -DZSTD_BUILD_PROGRAMS=OFF
-#         -DZSTD_BUILD_TESTS=OFF
-#         -DZSTD_BUILD_SHARED=OFF
-#       UPDATE_COMMAND ""
-#     )
-#     ExternalProject_Add(zlib_dl
-#       GIT_REPOSITORY https://github.com/zlib-ng/zlib-ng.git
-#       GIT_TAG develop
-#       GIT_SHALLOW ON
-#       PREFIX ${CMAKE_BINARY_DIR}/zlib
-#       INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
-#       CMAKE_ARGS
-#         -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_DIR}
-#         ${APPLE_CMAKE_ARGS}
-#         -DZLIB_COMPAT=ON
-#         -DZLIB_ENABLE_TESTS=OFF
-#       UPDATE_COMMAND ""
-#     )
-#     ExternalProject_Add(minizip_dl
-#       GIT_REPOSITORY https://github.com/zlib-ng/minizip-ng.git
-#       GIT_TAG master
-#       GIT_SHALLOW ON
-#       PREFIX ${CMAKE_BINARY_DIR}/minizip
-#       INSTALL_DIR ${EXTERNAL_INSTALL_DIR}
-#       CMAKE_ARGS
-#         -DCMAKE_INSTALL_PREFIX=${EXTERNAL_INSTALL_DIR}
-#         ${APPLE_CMAKE_ARGS}
-#         -DMZ_LZMA=OFF -DMZ_ICONV=OFF -DMZ_LIBCOMP=OFF
-#         -DMZ_BZIP2=${BZIP_STATUS}
-#       UPDATE_COMMAND ""
-#       DEPENDS ${BZIP_REQ}
-#     )
-#     ExternalProject_Add_StepDependencies(minizip_dl build ${BZIP_REQ})
-# endif()
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
@@ -320,16 +238,11 @@ endif()
 # Linking the built libraries
 target_include_directories(PosterChef PRIVATE ${EXTERNAL_INSTALL_DIR}/include)
 target_link_directories(PosterChef PRIVATE ${EXTERNAL_INSTALL_DIR}/lib)
-# target_link_libraries(PosterChef PRIVATE plist-2.0 imobiledevice-1.0 usbmuxd-2.0 ssl)
-# target_link_libraries(PosterChef PRIVATE bz2 zstd z-ng minizip)
 
 add_dependencies(PosterChef openssl_dl)
 add_dependencies(PosterChef libimobiledevice-glue_dl)
 add_dependencies(PosterChef libplist_dl libusbmuxd_dl)
 add_dependencies(PosterChef libimobiledevice_dl)
-# if (!WIN32)
-#     add_dependencies(PosterChef ${BZIP_REQ})
-# endif()
 add_dependencies(PosterChef minizip_dl)
 
 target_link_libraries(PosterChef PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
@@ -346,10 +259,6 @@ set(LIBIMOBILEDEVICE_LIBRARIES
     ${EXTERNAL_INSTALL_DIR}/lib/libimobiledevice-glue-1.0.a
 )
 target_link_libraries(PosterChef PRIVATE ${LIBIMOBILEDEVICE_LIBRARIES})
-# set(MINIZIP_LIBRARIES
-#     ${BZIP_LOC}
-#     ${EXTERNAL_INSTALL_DIR}/lib/libminizip.a
-# )
 set(MINIZIP_LIBRARIES
     ${EXTERNAL_INSTALL_DIR}/lib/libminizip.a
 )
