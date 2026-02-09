@@ -15,6 +15,9 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET ${OSX_TARGET})
 
 set(EXTERNAL_INSTALL_DIR ${CMAKE_BINARY_DIR}/external)
 
+# Add Windows libraries from src/vendor
+
+if (!WIN32)
 # Build OpenSSL
 if (APPLE)
     set(OPENSSL_CONFIG_CMD
@@ -28,13 +31,13 @@ if (APPLE)
           no-shared
           --prefix=<INSTALL_DIR>
     )
-elseif (WIN32)
-    set(OPENSSL_CONFIG_CMD perl
-        <SOURCE_DIR>/Configure
-        mingw
-        no-shared
-        --prefix=<INSTALL_DIR>
-    )
+# elseif (WIN32)
+#     set(OPENSSL_CONFIG_CMD perl
+#         <SOURCE_DIR>/Configure
+#         mingw
+#         no-shared
+#         --prefix=<INSTALL_DIR>
+#     )
 else()
     set(OPENSSL_CONFIG_CMD
         <SOURCE_DIR>/Configure
@@ -70,14 +73,14 @@ if (APPLE)
           --disable-shared --enable-static
           --without-cython
     )
-elseif (WIN32)
-    set(LIBI_CONFIG_CMD mingw64
-        <SOURCE_DIR>/autogen.sh
-          CC=gcc CXX=g++
-          --prefix=<INSTALL_DIR>
-          --disable-shared --enable-static
-          --without-cython
-    )
+# elseif (WIN32)
+#     set(LIBI_CONFIG_CMD mingw64
+#         <SOURCE_DIR>/autogen.sh
+#           CC=gcc CXX=g++
+#           --prefix=<INSTALL_DIR>
+#           --disable-shared --enable-static
+#           --without-cython
+#     )
 else()
     set(LIBI_CONFIG_CMD
         <SOURCE_DIR>/autogen.sh
@@ -87,13 +90,13 @@ else()
           --without-cython
     )
 endif()
-if (WIN32)
-    set(LIBI_BUILD_CMD ${CMAKE_COMMAND} --build <BINARY_DIR> --config Release)
-    set(LIBI_INSTALL_CMD ${CMAKE_COMMAND} --install <BINARY_DIR> --config Release)
-else()
+# if (WIN32)
+#     set(LIBI_BUILD_CMD ${CMAKE_COMMAND} --build <BINARY_DIR> --config Release)
+#     set(LIBI_INSTALL_CMD ${CMAKE_COMMAND} --install <BINARY_DIR> --config Release)
+# else()
     set(LIBI_BUILD_CMD make -j${CMAKE_BUILD_PARALLEL_LEVEL})
     set(LIBI_INSTALL_CMD make install)
-endif()
+# endif()
 ExternalProject_Add(libusbmuxd_dl
   GIT_REPOSITORY https://github.com/libimobiledevice/libusbmuxd.git
   GIT_TAG 2.0.2
@@ -150,10 +153,10 @@ if (APPLE)
     set(APPLE_CMAKE_ARGS
         -DCMAKE_OSX_DEPLOYMENT_TARGET=${OSX_TARGET}
     )
-elseif(WIN32)
-    set(APPLE_CMAKE_ARGS
-        -DMZ_BZIP2=OFF -DMZ_LZMA=OFF -A x64
-    )
+# elseif(WIN32)
+#     set(APPLE_CMAKE_ARGS
+#         -DMZ_BZIP2=OFF -DMZ_LZMA=OFF -A x64
+#     )
 else()
     set(APPLE_CMAKE_ARGS "")
 endif()
@@ -169,6 +172,7 @@ ExternalProject_Add(minizip_dl
     ${APPLE_CMAKE_ARGS}
   UPDATE_COMMAND ""
 )
+endif() # if !WIN32
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
@@ -235,17 +239,23 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
+if (WIN32)
+    # Link pre-built libraries from src/vendor
+    set(EXTERNAL_INSTALL_DIR ${CMAKE_SOURCE_DIR}/vendor)
+endif()
+
 # Linking the built libraries
 target_include_directories(PosterChef PRIVATE ${EXTERNAL_INSTALL_DIR}/include)
 target_link_directories(PosterChef PRIVATE ${EXTERNAL_INSTALL_DIR}/lib)
 
-add_dependencies(PosterChef openssl_dl)
-add_dependencies(PosterChef libimobiledevice-glue_dl)
-add_dependencies(PosterChef libplist_dl libusbmuxd_dl)
-add_dependencies(PosterChef libimobiledevice_dl)
-add_dependencies(PosterChef minizip_dl)
+if (!WIN32)
+    add_dependencies(PosterChef openssl_dl)
+    add_dependencies(PosterChef libimobiledevice-glue_dl)
+    add_dependencies(PosterChef libplist_dl libusbmuxd_dl)
+    add_dependencies(PosterChef libimobiledevice_dl)
+    add_dependencies(PosterChef minizip_dl)
+endif()
 
-target_link_libraries(PosterChef PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 set(OPENSSL_LIBRARIES
     ${EXTERNAL_INSTALL_DIR}/lib/libssl.a
     ${EXTERNAL_INSTALL_DIR}/lib/libcrypto.a
@@ -263,6 +273,9 @@ set(MINIZIP_LIBRARIES
     ${EXTERNAL_INSTALL_DIR}/lib/libminizip.a
 )
 target_link_libraries(PosterChef PRIVATE ${MINIZIP_LIBRARIES})
+
+
+target_link_libraries(PosterChef PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 # Finish building
 set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.leemin.PosterChef)
